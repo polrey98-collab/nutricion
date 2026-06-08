@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>Nutrición Pol</title>
+<meta name="theme-color" content="#1A3C2A" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Nutrición" />
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=DM+Sans:wght@400;500;600&display=swap" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { background: #F5F0E8; }
+:root {
+  --bg:#F5F0E8; --green:#1A3C2A; --gl:#EEF4F1; --gold:#C8921A; --gold-bg:#FEF9EE;
+  --wh:#fff; --tx:#1C1917; --mu:#6E665D; --fa:#837B72; --bd:#EDE8E0;
+  --sh:0 1px 5px rgba(0,0,0,.07); --serif:'Lora',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif;
+}
+.app { font-family:var(--sans); background:var(--bg); max-width:480px; margin:0 auto; min-height:100vh; min-height:100dvh; display:flex; flex-direction:column; }
+.hdr { background:var(--green); padding:calc(16px + env(safe-area-inset-top,0px)) 20px 14px; position:sticky; top:0; z-index:40; }
+.hdr-t { font-family:var(--serif); font-size:19px; font-weight:600; color:#fff; letter-spacing:-.3px; }
+.hdr-s { font-size:11px; color:rgba(255,255,255,.62); margin-top:2px; }
+.scroll { flex:1; padding:14px; padding-bottom:96px; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.bnav { position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px; background:var(--wh); border-top:1px solid var(--bd); display:flex; padding:5px 0 calc(11px + env(safe-area-inset-bottom,0px)); z-index:40; }
+.bni { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; background:none; border:none; padding:5px 4px; min-height:44px; justify-content:center; }
+.bni-ico { font-size:21px; }
+.bni.on .bni-ico { transform:scale(1.14); }
+.bni-lbl { font-size:10px; font-weight:500; color:var(--fa); }
+.bni.on .bni-lbl { color:var(--green); font-weight:600; }
+.card { background:var(--wh); border-radius:14px; overflow:hidden; margin-bottom:10px; box-shadow:var(--sh); }
+.vtog { display:flex; gap:4px; background:var(--wh); border-radius:11px; padding:4px; margin-bottom:14px; box-shadow:var(--sh); }
+.vtb { flex:1; padding:8px 0; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; font-family:var(--sans); background:transparent; color:var(--mu); }
+.vtb.on { background:var(--green); color:#fff; font-weight:600; }
+.now-banner { background:var(--green); color:#fff; border-radius:12px; padding:11px 14px; margin-bottom:12px; display:flex; align-items:center; gap:10px; }
+.nb-time { font-weight:600; font-size:13px; white-space:nowrap; }
+.nb-txt { font-size:13px; color:rgba(255,255,255,.9); }
+.obj-card { padding:14px 16px; }
+.obj-title { font-size:11px; font-weight:600; color:var(--green); text-transform:uppercase; letter-spacing:.65px; margin-bottom:10px; }
+.obj-row { display:flex; gap:9px; align-items:flex-start; padding:3px 0; font-size:13px; color:#374151; line-height:1.45; }
+.obj-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); flex-shrink:0; margin-top:5px; }
+.acc-h { display:flex; align-items:center; gap:12px; padding:14px 16px; cursor:pointer; background:var(--wh); width:100%; border:none; text-align:left; min-height:52px; }
+.meal-c { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+.acc-n { font-family:var(--serif); font-size:16px; font-weight:600; color:var(--tx); }
+.acc-ti { font-size:11px; color:var(--mu); margin-top:1px; }
+.chev { font-size:10px; color:var(--fa); transition:transform .2s; }
+.chev.op { transform:rotate(180deg); }
+.acc-b { padding:2px 16px 16px; border-top:1px solid var(--bg); }
+.opt-bl { margin-top:12px; }
+.opt-tl { font-size:11px; font-weight:600; color:var(--green); text-transform:uppercase; letter-spacing:.65px; margin-bottom:8px; }
+.opt-r { display:flex; gap:9px; padding:5px 0; border-bottom:1px solid #F9F5EF; font-size:13.5px; color:#374151; line-height:1.45; }
+.opt-r:last-child { border-bottom:none; }
+.opt-d { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:8px; }
+.thirds { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; margin-top:12px; }
+.third { background:#F5F9F7; border-radius:10px; padding:10px 7px; text-align:center; }
+.th-ico { font-size:18px; }
+.th-lbl { font-size:10.5px; font-weight:600; color:var(--green); margin:4px 0 3px; }
+.th-dsc { font-size:9.5px; color:var(--mu); line-height:1.4; }
+.note-box { background:var(--gold-bg); border-left:3px solid #F59E0B; border-radius:0 7px 7px 0; padding:8px 10px; margin-top:10px; font-size:13px; color:#92400E; }
+.thy-pt { display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid var(--bg); }
+.thy-pt:last-of-type { border-bottom:none; }
+.thy-pt-ico { font-size:20px; flex-shrink:0; padding-top:1px; }
+.thy-pt-b { font-size:13px; font-weight:600; color:var(--tx); margin-bottom:3px; }
+.thy-pt-t { font-size:13px; color:var(--mu); line-height:1.48; }
+.thy-footer { margin-top:10px; padding:10px; background:var(--gl); border-radius:8px; font-size:12.5px; color:var(--green); font-weight:500; line-height:1.5; }
+.lst-ttl { font-family:var(--serif); font-size:15px; font-weight:600; color:var(--tx); margin:16px 0 10px; }
+.lst-grp { background:var(--wh); border-radius:12px; padding:12px 14px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.lst-gt { font-size:11px; font-weight:600; color:var(--green); text-transform:uppercase; letter-spacing:.65px; margin-bottom:7px; }
+.lst-gb { font-size:13px; color:#374151; line-height:1.9; }
+.fbar { display:flex; gap:7px; overflow-x:auto; padding-bottom:4px; margin-bottom:14px; scrollbar-width:none; }
+.fbar::-webkit-scrollbar { display:none; }
+.pill { flex-shrink:0; padding:6px 14px; border-radius:20px; border:1.5px solid var(--bd); background:var(--wh); font-size:13px; font-weight:500; color:var(--mu); cursor:pointer; font-family:var(--sans); min-height:34px; }
+.pill.on { background:var(--green); border-color:var(--green); color:#fff; }
+.opt-grp-h { display:flex; align-items:center; gap:11px; padding:13px 16px; cursor:pointer; background:var(--wh); width:100%; border:none; text-align:left; min-height:50px; }
+.opt-grp-ico { font-size:20px; flex-shrink:0; }
+.opt-grp-nm { font-size:14.5px; font-weight:600; color:var(--tx); }
+.opt-grp-fr { font-size:11px; color:var(--green); margin-top:2px; font-weight:500; }
+.opt-grp-body { padding:2px 16px 14px; border-top:1px solid var(--bg); }
+.opt-item { display:flex; gap:10px; padding:7px 0; border-bottom:1px solid #F9F5EF; align-items:flex-start; }
+.opt-item:last-child { border-bottom:none; }
+.opt-item-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; margin-top:7px; }
+.opt-item-t { font-size:13.5px; color:var(--tx); line-height:1.4; }
+.opt-item-n { font-size:11.5px; color:var(--green); margin-top:2px; font-weight:500; }
+.date-nav { display:flex; align-items:center; gap:10px; background:var(--wh); border-radius:12px; padding:8px 10px; margin-bottom:12px; box-shadow:var(--sh); }
+.dn-arrow { width:38px; height:38px; border-radius:10px; border:none; background:var(--bg); color:var(--green); font-size:20px; font-weight:600; cursor:pointer; flex-shrink:0; }
+.dn-arrow:disabled { color:#C9C3BA; background:#FAF7F1; }
+.dn-center { flex:1; text-align:center; }
+.dn-day { font-size:14px; font-weight:600; color:var(--tx); text-transform:capitalize; }
+.dn-tag { display:inline-block; margin-top:2px; font-size:10px; font-weight:600; color:#fff; background:var(--green); padding:1px 9px; border-radius:9px; }
+.dn-today { margin-top:2px; background:none; border:none; color:var(--green); font-size:11px; font-weight:600; cursor:pointer; text-decoration:underline; font-family:var(--sans); }
+.comp-card { background:var(--wh); border-radius:14px; padding:18px; margin-bottom:14px; box-shadow:var(--sh); display:flex; align-items:center; gap:16px; }
+.comp-r { flex:1; }
+.comp-pc { font-family:var(--serif); font-size:26px; font-weight:600; color:var(--green); line-height:1.1; }
+.comp-sb { font-size:12px; color:var(--fa); margin-top:2px; }
+.gym-badge { display:inline-block; margin-top:8px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.gym-badge.on { background:#FEF3C7; color:#92400E; }
+.gym-badge.off { background:#EEF2FF; color:#3730A3; }
+.trk-wrap { margin-bottom:7px; }
+.trk-row { background:var(--wh); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:13px; cursor:pointer; box-shadow:0 1px 3px rgba(0,0,0,.05); min-height:50px; }
+.trk-row.ck { background:var(--gl); }
+.trk-row.now { box-shadow:0 0 0 2px var(--green); }
+.trk-ico { font-size:20px; flex-shrink:0; }
+.trk-lbl { flex:1; font-size:14.5px; font-weight:500; color:var(--tx); }
+.trk-row.ck .trk-lbl { color:var(--green); }
+.now-tag { font-size:9.5px; background:var(--green); color:#fff; padding:2px 7px; border-radius:9px; margin-left:8px; font-weight:600; }
+.chk-o { width:24px; height:24px; border-radius:50%; border:2px solid #C9C3BA; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:13px; }
+.chk-o.ck { background:var(--green); border-color:var(--green); color:#fff; }
+.chip-row { display:flex; flex-wrap:wrap; gap:6px; align-items:center; padding:8px 6px 2px; }
+.chip-lbl { font-size:11px; color:var(--mu); font-weight:600; margin-right:2px; }
+.chip { padding:5px 10px; border-radius:16px; border:1.5px solid var(--bd); background:var(--wh); font-size:11.5px; font-weight:500; color:var(--mu); cursor:pointer; font-family:var(--sans); }
+.chip.on { background:var(--green); border-color:var(--green); color:#fff; }
+.wk-box { background:var(--wh); border-radius:12px; padding:14px; margin-top:6px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.wk-hdr { font-size:11px; font-weight:600; color:var(--fa); text-transform:uppercase; letter-spacing:.65px; margin-bottom:10px; }
+.wk-cols { display:flex; gap:5px; }
+.wk-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer; }
+.wk-col.sel .wk-bg { box-shadow:0 0 0 2px var(--green); }
+.wk-dl { font-size:9.5px; color:var(--fa); font-weight:500; }
+.wk-bg { width:100%; height:44px; background:var(--bg); border-radius:4px; overflow:hidden; display:flex; align-items:flex-end; }
+.wk-fill { width:100%; border-radius:4px; }
+.wk-dn { font-size:9.5px; color:var(--fa); }
+.var-card { background:var(--wh); border-radius:12px; padding:12px 14px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.var-head { font-size:12px; font-weight:600; color:var(--green); margin-bottom:8px; }
+.var-row { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:12.5px; border-bottom:1px solid #F9F5EF; }
+.var-row:last-child { border-bottom:none; }
+.var-ico { font-size:15px; }
+.var-lbl { flex:1; color:var(--tx); }
+.var-cnt { font-weight:700; color:var(--tx); min-width:22px; text-align:right; }
+.var-tgt { font-size:10.5px; color:var(--fa); min-width:52px; text-align:right; }
+.var-st { font-size:10px; font-weight:600; padding:2px 7px; border-radius:10px; min-width:58px; text-align:center; }
+.var-st.ok { background:#DCFCE7; color:#166534; }
+.var-st.lo { background:#FEF3C7; color:#92400E; }
+.var-st.hi { background:#FEE2E2; color:#991B1B; }
+.var-hint { font-size:11px; color:var(--mu); line-height:1.5; margin:4px 2px 0; }
+.export-btn { width:100%; margin-top:12px; padding:11px; border-radius:10px; border:1.5px dashed var(--bd); background:transparent; color:var(--mu); font-size:12.5px; font-weight:500; cursor:pointer; font-family:var(--sans); }
+.export-box { background:var(--wh); border-radius:12px; padding:12px; margin-top:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.export-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--mu); }
+.export-bar button { background:var(--green); color:#fff; border:none; border-radius:8px; padding:5px 12px; font-size:12px; font-weight:600; cursor:pointer; font-family:var(--sans); }
+.export-ta { width:100%; height:120px; border:1px solid var(--bd); border-radius:8px; padding:8px; font-size:11px; font-family:monospace; color:var(--tx); background:var(--bg); resize:none; }
+.disclaimer { font-size:10.5px; color:var(--fa); line-height:1.5; text-align:center; padding:16px 10px 4px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+
+// ── Helpers ──
+function localDateStr(d){ d=d||new Date(); var y=d.getFullYear(), m=String(d.getMonth()+1).padStart(2,"0"), day=String(d.getDate()).padStart(2,"0"); return y+"-"+m+"-"+day; }
+function shiftDate(s,delta){ var d=new Date(s+"T12:00:00"); d.setDate(d.getDate()+delta); return localDateStr(d); }
+function dowOf(s){ return new Date(s+"T12:00:00").getDay(); }
+function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+function currentMeal(){ var h=new Date().getHours(); if(h<10)return"desayuno"; if(h<12)return"matina"; if(h<16)return"dinar"; if(h<19)return"berenar"; return"sopar"; }
+var TODAY=localDateStr(), NOW_MEAL=currentMeal();
+
+var MEAL_META={
+  desayuno:{label:"Desayuno",icon:"🌅",time:"7–9h",color:"#F59E0B"},
+  matina:{label:"Media Mañana",icon:"🍎",time:"~11h",color:"#10B981"},
+  dinar:{label:"Comida",icon:"☀️",time:"13h",color:"#F97316"},
+  berenar:{label:"Merienda",icon:"⚡",time:"16–18h",color:"#8B5CF6"},
+  sopar:{label:"Cena",icon:"🌙",time:"20–22h",color:"#3B82F6"}
+};
+var MEAL_IDS=["desayuno","matina","dinar","berenar","sopar"];
+
+var PLAN={
+  desayuno:[{kind:"opts",blocks:[
+    {title:"Plan A",items:["Té matcha / café con avena, o limonada con canela","Bocadillo: pavo, jamón ibérico con tomate, o queso semi — priorizar el queso para saciar","Fruta: plátano, piña (3-4 rodajas), kiwi, manzana o pera","Opcional: creatina 5–10g solo si etapa de crecimiento muscular"]},
+    {title:"Plan B — Porridge",items:["Copos de avena + bebida de avena + cacao o crema de cacahuete + pizca de sal","Preparar la noche anterior · consumir a temperatura ambiente","Opcional: frutos rojos, plátano troceado o mermelada"]}
+  ]}],
+  matina:[{kind:"opts",blocks:[
+    {title:"Elige una opción",items:["💧 Aprox. 0,5 L de agua durante la mañana","Op.1 — Puñado de frutos secos (almendra, nueces, cacahuete) + manzana o pera","Op.2 — 2 tortitas de arroz con jamón salado o dulce","Op.3 — Nada si desayunaste porridge (Plan B)"]}
+  ]}],
+  dinar:[
+    {kind:"thirds",items:[
+      {icon:"🌾",label:"1/3 Hidratos",desc:"1-2d legumbre · 2-3d patata · 2-3d arroz o pasta"},
+      {icon:"🥩",label:"1/3 Proteína",desc:"3-4d carne magra/pescado blanco · 1-2d carne roja/pez azul · 1-2d huevos"},
+      {icon:"🥦",label:"1/3 Verdura",desc:"Mezcla de colores y grupos a lo largo de la semana"}
+    ]},
+    {kind:"note",text:"Postre: mandarina + café con bebida de avena"}
+  ],
+  berenar:[{kind:"opts",blocks:[
+    {title:"⚡ Si vienes de entrenar",items:["⭐ Yogur proteico + manzana o pera (opción prioritaria)","Bocadillo de bonito / ventresca en aceite","Batido proteico + manzana o plátano"]},
+    {title:"🧘 Si no entrenas — 2 snacks",items:["16h — Yogur + fruta (naranja / manzana / pera / mandarinas) + frutos secos o crema de cacahuete 100% + chocolate 85%","18:30h — Tostada salada: pavo o queso semi + ¼ aguacate (o doble ración)"]}
+  ]}],
+  sopar:[
+    {kind:"thirds",items:[
+      {icon:"🍞",label:"1/3 Hidratos",desc:"3-4d pan (80g) · 2-3d patata · 1-2d legumbre/quinoa · algún día pizza, wrap o pasta"},
+      {icon:"🥚",label:"1/3 Proteína",desc:"3-4d huevos (prioritario en cena) · 2-3d carne magra/pescado blanco · 1-2d carne roja/pez azul"},
+      {icon:"🥗",label:"1/3 Verdura",desc:"Mezcla de colores y grupos"}
+    ]},
+    {kind:"note",text:"Postre: yogur con kiwi o uva. Si ya tomaste yogur en merienda → solo la fruta"}
+  ]
+};
+
+var OPTIONS={
+  desayuno:[
+    {g:"Bebida",ico:"☕",items:[{t:"Té matcha",n:""},{t:"Café con bebida de avena",n:""},{t:"Limonada con canela",n:"Alternativa sin cafeína"}]},
+    {g:"Bocadillo (Plan A)",ico:"🥪",items:[{t:"Pavo en lonchas",n:""},{t:"Jamón ibérico con rodajas de tomate",n:""},{t:"Queso semi (2 porciones)",n:"⭐ Prioritario — más saciante"}]},
+    {g:"Fruta",ico:"🍓",items:[{t:"Plátano",n:"IG alto → mejor a primera hora"},{t:"Piña (3-4 rodajas)",n:"IG alto → mejor a primera hora"},{t:"Kiwi",n:"Vitamina C → absorción de hierro ×3"},{t:"Manzana",n:""},{t:"Pera",n:""}]},
+    {g:"Plan B — Base porridge",ico:"🥣",items:[{t:"Copos de avena + bebida de avena + pizca de sal",n:"Base · Preparar la noche anterior"},{t:"+ Cacao puro en polvo",n:"Sabor chocolate"},{t:"+ Crema de cacahuete (sin azúcar)",n:"Sabor cacahuete + grasa buena"}]},
+    {g:"Plan B — Toppings opcionales",ico:"🍓",items:[{t:"Frutos rojos (arándanos, frambuesas, fresas)",n:""},{t:"Plátano troceado",n:""},{t:"Mermelada (con moderación)",n:""}]}
+  ],
+  matina:[
+    {g:"Opción 1 — Frutos secos + fruta",ico:"🥜",items:[{t:"Almendras (~30g)",n:"Ricas en vitamina E y calcio"},{t:"Nueces (~30g)",n:"Las mejores en omega-3"},{t:"Cacahuetes (~30g)",n:"Técnicamente legumbre — proteína vegetal"},{t:"Manzana",n:"IG medio → sacia hasta la comida"},{t:"Pera",n:"IG medio → sacia hasta la comida"}]},
+    {g:"Opción 2 — Tortitas de arroz",ico:"🍙",items:[{t:"2 tortitas de arroz",n:"Sin gluten · Base neutra"},{t:"Jamón dulce (2-3 lonchas)",n:""},{t:"Jamón salado (2-3 lonchas)",n:""}]},
+    {g:"Opción 3 — Sin snack",ico:"💤",items:[{t:"Solo si desayunaste porridge (Plan B)",n:"El porridge lleva más grasa y fibra → retrasa el hambre 2-3h extra"}]}
+  ],
+  dinar:[
+    {g:"Hidratos — rotar semana",ico:"🌾",freq:"1-2d legumbre · 2-3d patata · 2-3d arroz/pasta",items:[{t:"Lentejas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Garbanzos",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Alubias blancas o pintas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Patata cocida",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Patata al horno",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Arroz blanco",n:"Fácil de digerir · Bueno días de entreno duro"},{t:"Arroz integral",n:"Más fibra · Mejor para microbiota"},{t:"Pasta (blanca o integral)",n:"Compartir frecuencia semanal con el arroz"}]},
+    {g:"Proteína — rotar semana",ico:"🥩",freq:"3-4d carne magra/pez blanco · 1-2d carne roja/pez azul · 1-2d huevos",items:[{t:"Pechuga de pollo",n:"Carne magra · 3-4 días/semana"},{t:"Pavo (filete o lonchas)",n:"Carne magra · 3-4 días/semana"},{t:"Merluza",n:"Pescado blanco · 3-4 días/semana"},{t:"Bacalao fresco",n:"Pescado blanco · 3-4 días/semana"},{t:"Lenguado",n:"Pescado blanco · 3-4 días/semana"},{t:"Ternera / carne roja",n:"Máx. 1-2 días/semana · Hierro hem"},{t:"Salmón",n:"Pescado azul · 1-2 días/semana · Omega-3"},{t:"Atún fresco",n:"Pescado azul · 1-2 días/semana · Omega-3"},{t:"Huevos (2-3)",n:"1-2 días/semana opcional en comida"}]},
+    {g:"Verdura",ico:"🥦",items:[{t:"Espinacas, acelgas, rúcula, canónigos",n:"Grupo hoja"},{t:"Pimiento rojo, zanahoria, calabaza",n:"Grupo vitamina A"},{t:"Brócoli, coliflor, col rizada, col blanca, col china",n:"Grupo calcio · Objetivo del plan: incorporar más"}]},
+    {g:"Postre",ico:"🍊",items:[{t:"Mandarina",n:"Vitamina C + digestión"},{t:"Café con bebida de avena",n:""}]}
+  ],
+  berenar:[
+    {g:"Si entrenas — elige uno",ico:"⚡",items:[{t:"Yogur proteico + manzana o pera",n:"⭐ Prioritario: proteína rápida + glucógeno"},{t:"Bocadillo de bonito en aceite",n:"Alternativa sólida"},{t:"Bocadillo de ventresca en aceite",n:"Alternativa sólida"},{t:"Batido proteico HSN Evobeef + manzana",n:"Si no apetece sólido"},{t:"Batido proteico HSN Evobeef + plátano",n:"Si no apetece sólido"}]},
+    {g:"16h snack (si no entrenas)",ico:"🍎",items:[{t:"Yogur (normal u opcional proteico)",n:""},{t:"Naranja",n:"Vitamina C"},{t:"Manzana",n:""},{t:"Pera",n:""},{t:"2 mandarinas",n:""},{t:"Puñado de frutos secos (almendra/nueces/cacahuete)",n:""},{t:"Crema de cacahuete o almendra 100%",n:"Sin azúcar añadido"},{t:"Chocolate 85% (2 onzas)",n:""}]},
+    {g:"18:30h tostada (si no entrenas)",ico:"🍞",items:[{t:"Pan + pavo + ¼ aguacate",n:""},{t:"Pan + queso semi + ¼ aguacate",n:""},{t:"Doble ración si tienes más hambre",n:""}]}
+  ],
+  sopar:[
+    {g:"Hidratos — rotar semana",ico:"🍞",freq:"3-4d pan · 2-3d patata · 1-2d legumbre/quinoa · algún día pizza/wrap/pasta",items:[{t:"Pan (80g)",n:"3-4 noches/semana · Prioritario en cena"},{t:"Patata cocida o al horno",n:"2-3 noches/semana"},{t:"Lentejas o garbanzos",n:"1-2 noches/semana"},{t:"Quinoa",n:"1-2 noches/semana · Proteína vegetal extra"},{t:"Pizza casera (masa fina)",n:"Variedad · Ocasional"},{t:"Wrap o tortilla de trigo",n:"Variedad · Ocasional"},{t:"Pasta",n:"Variedad · Ocasional"}]},
+    {g:"Proteína — rotar semana",ico:"🥚",freq:"3-4d huevos · 2-3d carne magra/pez blanco · 1-2d carne roja/pez azul",items:[{t:"Huevos (2-3 unidades)",n:"3-4 noches/semana · Prioritario en cena"},{t:"Pollo o pavo a la plancha",n:"2-3 noches/semana"},{t:"Merluza o bacalao",n:"2-3 noches/semana"},{t:"Salmón",n:"1-2 noches/semana · Omega-3"},{t:"Atún fresco o en conserva",n:"1-2 noches/semana"},{t:"Sardinas",n:"1-2 noches/semana · Calcio + omega-3"}]},
+    {g:"Verdura",ico:"🥗",items:[{t:"Espinacas salteadas con ajo",n:"Grupo hoja · 3 min"},{t:"Rúcula o canónigos en crudo",n:"Grupo hoja · Sin cocción"},{t:"Brócoli o coliflor al vapor",n:"Grupo calcio · 5 min"},{t:"Col salteada o en ensalada",n:"Grupo calcio · Objetivo del plan"},{t:"Pimiento asado, zanahoria, calabaza",n:"Grupo vitamina A"}]},
+    {g:"Postre",ico:"🍇",items:[{t:"Yogur con kiwi o uva",n:"Solo si NO tomaste yogur en merienda"},{t:"Kiwi, uva o frambuesas (solo fruta)",n:"Si ya tomaste yogur en merienda"}]}
+  ]
+};
+
+var THEORY=[
+  {id:"tercios",ico:"⚖️",title:"Los Tercios",sub:"Por qué dividir el plato en 3 partes iguales",points:[
+    {ico:"🌾",b:"Hidratos complejos",t:"Dan energía sostenida sin pico de insulina. Se digieren lento. Clave para rendir en el trabajo y el gimnasio sin caer en el bajón de media tarde."},
+    {ico:"🥩",b:"Proteína",t:"Repara y construye músculo post-entreno. Además, es el macronutriente que más sacia: mantiene el hambre a raya durante más horas que los hidratos solos."},
+    {ico:"🥦",b:"Verdura",t:"Aporta fibra (microbiota), vitaminas y minerales. La fibra ralentiza la absorción de los hidratos, estabilizando el azúcar en sangre y evitando picos."}
+  ],footer:"La verdura no es guarnición — es 1/3 real del plato. Sin ella el equilibrio se rompe y el plato queda incompleto nutricionalmente."},
+  {id:"ig",ico:"📈",title:"Índice Glucémico (IG)",sub:"Por qué la fruta no es igual a cualquier hora",points:[
+    {ico:"🍌",b:"IG alto (plátano, piña, mango)",t:"Suben el azúcar en sangre rápido → energía inmediata. Ideales por la mañana cuando el cuerpo necesita 'arrancar'. A esa hora el pico de insulina no es problema porque viene actividad."},
+    {ico:"🍎",b:"IG medio (manzana, pera)",t:"Absorción más lenta → energía sostenida y saciedad duradera. Perfectas para media tarde: sacian hasta la cena sin generar pico de insulina que después cause hambre."},
+    {ico:"🍊",b:"Vitamina C (kiwi, naranja, mandarina)",t:"No es solo cuestión de IG: su vitamina C potencia la absorción del hierro no hemo del bocadillo (pavo, jamón) hasta ×3. Por eso van juntos en el desayuno, no es casualidad."}
+  ],footer:null},
+  {id:"hidratos",ico:"🌾",title:"Por qué rotar los hidratos",sub:"Legumbre vs patata vs arroz/pasta — cada uno da cosas distintas",points:[
+    {ico:"🫘",b:"Legumbre (1-2 días/semana)",t:"La única que también aporta proteína vegetal. Su fibra fermentable es el alimento preferido de la microbiota. Rica en hierro, zinc y ácido fólico — nutrientes que el arroz y la patata no tienen."},
+    {ico:"🥔",b:"Patata (2-3 días/semana)",t:"Vitamina C (más que la manzana), potasio (clave para recuperación muscular y calambres) y más saciante que el arroz. Mejor cocida o al horno que frita."},
+    {ico:"🍚",b:"Arroz y pasta (2-3 días/semana)",t:"La energía más 'limpia' y fácil de controlar. El arroz blanco es de fácil digestión (bueno los días de entreno duro). La pasta integral tiene más fibra. Comparten frecuencia semanal."}
+  ],footer:"Rotar los tres asegura que cada semana entren nutrientes que los otros no dan. Siempre lo mismo = siempre las mismas carencias."},
+  {id:"microbiota",ico:"🦠",title:"Microbiota intestinal",sub:"Por qué la variedad importa más que la cantidad",points:[
+    {ico:"🔬",b:"Qué es",t:"El ecosistema de billones de bacterias en tu intestino. Influye en la digestión, el sistema inmune, el estado de ánimo (produce serotonina) y la recuperación muscular."},
+    {ico:"🌍",b:"Por qué necesita variedad",t:"Cada cepa bacteriana necesita 'comer' cosas distintas. Si siempre comes lo mismo, solo sobreviven las bacterias que digieren ese alimento. La diversidad bacteriana cae y el sistema se debilita."},
+    {ico:"🥦",b:"Crucíferas (brócoli, col, coliflor)",t:"Generan butirato, un ácido graso que alimenta las células del intestino y reduce la inflamación intestinal. Por eso el plan insiste en incorporarlas aunque 'hinchan' al principio — el cuerpo se adapta en 2-3 semanas."}
+  ],footer:"Objetivo del plan: rotar verduras, frutas e hidratos para alimentar bacterias distintas cada semana. Diversidad alimentaria = diversidad bacteriana."},
+  {id:"huevos",ico:"🥚",title:"Por qué los huevos en cena",sub:"El más completo y práctico de los alimentos nocturnos",points:[
+    {ico:"💪",b:"Proteína completa",t:"Contiene todos los aminoácidos esenciales en proporciones ideales. Rápido de preparar (8-10 min) y fácil de digerir para la noche, a diferencia de las carnes."},
+    {ico:"🧠",b:"Colina (en la yema)",t:"Esencial para el sistema nervioso, la memoria y la función cognitiva. Solo está en la yema, no en las claras. El huevo entero es mucho más nutritivo que solo claras."},
+    {ico:"❌",b:"El mito del colesterol",t:"La evidencia actual no relaciona el consumo de huevo entero (2-3 al día) con el aumento de LDL en personas sanas. El colesterol dietético tiene un impacto muy pequeño en el colesterol sanguíneo."}
+  ],footer:"3-4 noches/semana de huevos descansa el sistema digestivo de carnes pesadas y diversifica el aporte de micronutrientes (B12, D, colina)."},
+  {id:"recovery",ico:"⚡",title:"La ventana post-entreno",sub:"Por qué el yogur proteico es la opción 1",points:[
+    {ico:"⏱️",b:"La ventana anabólica (30-90 min)",t:"Después de entrenar el músculo está en su momento más receptivo para absorber nutrientes y activar la síntesis proteica. Aprovecharlo acelera la recuperación."},
+    {ico:"🥛",b:"Proteína rápida (yogur)",t:"Activa inmediatamente la síntesis proteica muscular. En tu caso: yogur proteico o HSN Evobeef (carne hidrolizada). NO whey — sensibilidad al suero de leche."},
+    {ico:"🍎",b:"Carbohidrato simple (fruta)",t:"Repone el glucógeno (energía almacenada en músculo) que acabas de gastar. La fructosa de la fruta es de absorción rápida, ideal para esta ventana."}
+  ],footer:"El bonito funciona pero es subóptimo: proteína de digestión más lenta y sin carbohidrato rápido. Sirve como plan B cuando no hay yogur."},
+  {id:"grasas",ico:"🥑",title:"Las grasas del plan",sub:"Aguacate, frutos secos y AOVE — función de cada uno",points:[
+    {ico:"🫒",b:"AOVE en comidas y cenas",t:"Antiinflamatorio. Imprescindible para absorber las vitaminas liposolubles (A, D, E, K) de las verduras. Sin algo de grasa con la verdura, parte de sus nutrientes se pierden."},
+    {ico:"🥑",b:"Aguacate (¼ en merienda)",t:"Grasa monoinsaturada + potasio + fibra. Ralentiza la digestión de la tostada y mantiene la saciedad hasta la cena. Un cuarto es suficiente — es calóricamente denso."},
+    {ico:"🥜",b:"Frutos secos",t:"Omega-3 (nueces), vitamina E (almendras), proteína vegetal. Un puñado (~30g) sacia 2-3 horas. Más de un puñado aporta calorías que en mantenimiento no necesitas."}
+  ],footer:"Las grasas no engordan si se consumen en las cantidades del plan. Son esenciales para las hormonas (testosterona incluida) y para absorber nutrientes."}
+];
+
+var HID_CHIPS={
+  dinar:[{id:"legumbre",ico:"🫘",label:"Legumbre"},{id:"patata",ico:"🥔",label:"Patata"},{id:"arroz",ico:"🍚",label:"Arroz/Pasta"}],
+  sopar:[{id:"pan",ico:"🍞",label:"Pan"},{id:"patata",ico:"🥔",label:"Patata"},{id:"legumbre",ico:"🫘",label:"Legumbre"},{id:"otro",ico:"🍕",label:"Otro"}]
+};
+var HID_TARGETS={
+  dinar:[{id:"legumbre",ico:"🫘",label:"Legumbre",min:1,max:2},{id:"patata",ico:"🥔",label:"Patata",min:2,max:3},{id:"arroz",ico:"🍚",label:"Arroz/Pasta",min:2,max:3}],
+  sopar:[{id:"pan",ico:"🍞",label:"Pan",min:3,max:4},{id:"patata",ico:"🥔",label:"Patata",min:2,max:3},{id:"legumbre",ico:"🫘",label:"Legumbre/Quinoa",min:1,max:2},{id:"otro",ico:"🍕",label:"Pizza/Wrap/Pasta",min:0,max:2}]
+};
+function vEval(c,min,max){ if(c<min)return{cls:"lo",txt:"faltan "+(min-c)}; if(c>max)return{cls:"hi",txt:"de más"}; return{cls:"ok",txt:"✓ ok"}; }
+
+var TABS=[{id:"plan",icon:"📋",label:"Plan"},{id:"opciones",icon:"🥘",label:"Opciones"},{id:"hoy",icon:"✅",label:"Hoy"}];
+
+// ── Storage (localStorage) ──
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+function loadDay(d){ var r=lsGet("nut:"+d); return r?JSON.parse(r):{}; }
+function saveDay(d,data){ lsSet("nut:"+d, JSON.stringify(data)); }
+function weekCounts(){ var out={},base=new Date(); for(var i=6;i>=0;i--){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); var n=0; if(r){ var p=JSON.parse(r); for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]]) n++; } } out[k]=n; } return out; }
+function varietyCounts(){ var out={dinar:{},sopar:{}},base=new Date(); for(var i=0;i<7;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var r=lsGet("nut:"+localDateStr(dd)); if(!r)continue; var p=JSON.parse(r); if(p.dinarH)out.dinar[p.dinarH]=(out.dinar[p.dinarH]||0)+1; if(p.soparH)out.sopar[p.soparH]=(out.sopar[p.soparH]||0)+1; } return out; }
+function buildExport(){ var days={},base=new Date(); for(var i=0;i<30;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); if(r)days[k]=JSON.parse(r); } return JSON.stringify(days,null,2); }
+
+// ── State ──
+var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false };
+
+// ── View builders ──
+function vHeader(){
+  var H={ plan:["Mi Plan Nutricional","Dr. Carles Mas · Mantenimiento muscular"], opciones:["Opciones por Comida","Todos los ingredientes del plan"], hoy:["Seguimiento", cap(new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}))] };
+  var h=H[state.tab];
+  return '<div class="hdr"><div class="hdr-t">'+h[0]+'</div><div class="hdr-s">'+h[1]+'</div></div>';
+}
+
+function vPlan(){
+  var out='<div class="vtog">'+
+    '<button class="vtb'+(state.planView==="plan"?" on":"")+'" data-act="planview" data-val="plan">📋 Plan</button>'+
+    '<button class="vtb'+(state.planView==="aprende"?" on":"")+'" data-act="planview" data-val="aprende">📚 Aprende</button></div>';
+  if(state.planView==="plan"){
+    out+='<div class="card obj-card"><div class="obj-title">🎯 Objetivos del Plan</div>';
+    ["Aumentar la variedad de frutas en la dieta","Incorporar más coles y verduras flatulentas (mezcladas con otras)","Variar el tipo de hidrato de carbono en comida y cena"].forEach(function(o){ out+='<div class="obj-row"><div class="obj-dot"></div><span>'+o+'</span></div>'; });
+    out+='</div>';
+    MEAL_IDS.forEach(function(mid){
+      var meta=MEAL_META[mid], isOpen=state.openMeal===mid;
+      out+='<div class="card"><button class="acc-h" data-act="openmeal" data-val="'+mid+'"><div class="meal-c" style="background:'+meta.color+'22">'+meta.icon+'</div><div style="flex:1"><div class="acc-n">'+meta.label+'</div><div class="acc-ti">'+meta.time+'</div></div><span class="chev'+(isOpen?" op":"")+'">▼</span></button>';
+      if(isOpen){
+        out+='<div class="acc-b">';
+        PLAN[mid].forEach(function(block){
+          if(block.kind==="opts"){ block.blocks.forEach(function(opt){ out+='<div class="opt-bl"><div class="opt-tl">'+opt.title+'</div>'; opt.items.forEach(function(item){ out+='<div class="opt-r"><div class="opt-d" style="background:'+meta.color+'"></div><span>'+item+'</span></div>'; }); out+='</div>'; }); }
+          else if(block.kind==="thirds"){ out+='<div class="thirds">'; block.items.forEach(function(t){ out+='<div class="third"><div class="th-ico">'+t.icon+'</div><div class="th-lbl">'+t.label+'</div><div class="th-dsc">'+t.desc+'</div></div>'; }); out+='</div>'; }
+          else if(block.kind==="note"){ out+='<div class="note-box">✨ '+block.text+'</div>'; }
+        });
+        out+='</div>';
+      }
+      out+='</div>';
+    });
+    out+='<div class="lst-ttl">🥦 Listas de Referencia</div>'+
+      '<div class="lst-grp"><div class="lst-gt">Grupos de Verdura</div><div class="lst-gb">🌿 <strong>Hoja:</strong> espinacas, acelgas, canónigos, rúcula<br>🧡 <strong>Vitamina A:</strong> pimiento rojo, zanahoria, calabaza<br>💚 <strong>Calcio:</strong> brócoli, coliflor, col rizada, col blanca, col china</div></div>'+
+      '<div class="lst-grp"><div class="lst-gt">Frutas por Momento del Día</div><div class="lst-gb">🍊 <strong>Absorción de hierro:</strong> naranja, mandarina, kiwi<br>🍌 <strong>Mañana — IG alto:</strong> plátano, piña, mango<br>🍎 <strong>Tarde — saciante IG medio:</strong> manzana, pera<br>🫐 <strong>Sin calorías extra:</strong> arándanos, frambuesas, fresas</div></div>';
+  } else {
+    THEORY.forEach(function(card){
+      var isOpen=state.openTheory===card.id;
+      out+='<div class="card"><button class="acc-h" data-act="theory" data-val="'+card.id+'"><div style="font-size:26px;line-height:1;flex-shrink:0">'+card.ico+'</div><div style="flex:1"><div class="acc-n">'+card.title+'</div><div class="acc-ti">'+card.sub+'</div></div><span class="chev'+(isOpen?" op":"")+'">▼</span></button>';
+      if(isOpen){
+        out+='<div class="acc-b">';
+        card.points.forEach(function(p){ out+='<div class="thy-pt"><div class="thy-pt-ico">'+p.ico+'</div><div><div class="thy-pt-b">'+p.b+'</div><div class="thy-pt-t">'+p.t+'</div></div></div>'; });
+        if(card.footer) out+='<div class="thy-footer">'+card.footer+'</div>';
+        out+='</div>';
+      }
+      out+='</div>';
+    });
+  }
+  out+='<div class="disclaimer">ℹ️ Información orientativa basada en tu plan personalizado del Dr. Carles Mas. Ante dudas, cambios o nuevas condiciones, consúltalo con tu nutricionista.</div>';
+  return out;
+}
+
+function vOpciones(){
+  var out='<div class="fbar">';
+  MEAL_IDS.forEach(function(id){ out+='<button class="pill'+(state.optFilter===id?" on":"")+'" data-act="optfilter" data-val="'+id+'">'+MEAL_META[id].icon+' '+MEAL_META[id].label+'</button>'; });
+  out+='</div>';
+  var meta=MEAL_META[state.optFilter];
+  OPTIONS[state.optFilter].forEach(function(grp,gi){
+    var gkey=state.optFilter+"-"+gi, isOpen=state.openGroup===gkey;
+    out+='<div class="card"><button class="opt-grp-h" data-act="optgroup" data-val="'+gkey+'"><span class="opt-grp-ico">'+grp.ico+'</span><div style="flex:1"><div class="opt-grp-nm">'+grp.g+'</div>'+(grp.freq?'<div class="opt-grp-fr">'+grp.freq+'</div>':'')+'</div><span class="chev'+(isOpen?" op":"")+'">▼</span></button>';
+    if(isOpen){ out+='<div class="opt-grp-body">'; grp.items.forEach(function(item){ out+='<div class="opt-item"><div class="opt-item-dot" style="background:'+meta.color+'"></div><div><div class="opt-item-t">'+item.t+'</div>'+(item.n?'<div class="opt-item-n">'+item.n+'</div>':'')+'</div></div>'; }); out+='</div>'; }
+    out+='</div>';
+  });
+  return out;
+}
+
+function vHoy(){
+  var t=state.tracking, vd=state.viewDate;
+  var isToday=vd===TODAY, canNext=vd<TODAY, viewGym=[1,3,5].indexOf(dowOf(vd))>=0;
+  var label=cap(new Date(vd+"T12:00:00").toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"short"}));
+  var checked=0; MEAL_IDS.forEach(function(id){ if(t[id])checked++; });
+  var total=MEAL_IDS.length, pct=Math.round(checked/total*100);
+  var R=36, C=2*Math.PI*R, off=C*(1-pct/100);
+  var nowTime=new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digit"});
+
+  var out='<div class="date-nav"><button class="dn-arrow" data-act="date" data-val="-1">‹</button><div class="dn-center"><div class="dn-day">'+label+'</div>'+(isToday?'<span class="dn-tag">Hoy</span>':'<button class="dn-today" data-act="today">Volver a hoy</button>')+'</div><button class="dn-arrow" data-act="date" data-val="1"'+(canNext?'':' disabled')+'>›</button></div>';
+
+  if(isToday){ out+='<div class="now-banner"><span class="nb-time">🕐 '+nowTime+'</span><span class="nb-txt">Ahora toca <strong>'+MEAL_META[NOW_MEAL].label+'</strong> '+MEAL_META[NOW_MEAL].icon+'</span></div>'; }
+
+  out+='<div class="comp-card"><svg width="82" height="82" viewBox="0 0 82 82"><circle cx="41" cy="41" r="'+R+'" fill="none" stroke="#EDE8E0" stroke-width="7"></circle><circle cx="41" cy="41" r="'+R+'" fill="none" stroke="#1A3C2A" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+off+'" transform="rotate(-90 41 41)"></circle><text x="41" y="41" text-anchor="middle" dy=".35em" fill="#1A3C2A" font-size="14" font-weight="bold" font-family="Lora,Georgia,serif">'+pct+'%</text></svg>'+
+    '<div class="comp-r"><div class="comp-pc">'+checked+'/'+total+' comidas</div><div class="comp-sb">'+(pct===100?"¡Día perfecto! 🎉":pct>=60?"Buen ritmo 💪":pct>0?"Sigue adelante 🌱":(isToday?"Empieza a marcar 📌":"Sin registrar 📌"))+'</div><div class="gym-badge '+(viewGym?"on":"off")+'">'+(viewGym?"💪 Día de entreno":"🧘 Día de descanso")+'</div></div></div>';
+
+  MEAL_IDS.forEach(function(id){
+    var meta=MEAL_META[id], done=!!t[id], isNow=isToday&&id===NOW_MEAL, hasHid=(id==="dinar"||id==="sopar"), hidField=id==="dinar"?"dinarH":"soparH";
+    out+='<div class="trk-wrap"><div class="trk-row'+(done?" ck":"")+(isNow?" now":"")+'" data-act="toggle" data-val="'+id+'"><span class="trk-ico">'+meta.icon+'</span><span class="trk-lbl">'+meta.label+(isNow?'<span class="now-tag">ahora</span>':'')+'</span><div class="chk-o'+(done?" ck":"")+'">'+(done?"✓":"")+'</div></div>';
+    if(done&&hasHid){
+      out+='<div class="chip-row"><span class="chip-lbl">Hidrato:</span>';
+      HID_CHIPS[id].forEach(function(c){ var sel=t[hidField]===c.id; out+='<button class="chip'+(sel?" on":"")+'" data-act="hid" data-meal="'+id+'" data-val="'+c.id+'">'+c.ico+' '+c.label+'</button>'; });
+      out+='</div>';
+    }
+    out+='</div>';
+  });
+
+  var wk=weekCounts();
+  out+='<div class="wk-box"><div class="wk-hdr">Adherencia · toca un día para editarlo</div><div class="wk-cols">';
+  Object.keys(wk).forEach(function(date){
+    var count=wk[date], d=new Date(date+"T12:00:00"), dl=d.toLocaleDateString("es-ES",{weekday:"short"}).slice(0,2), dn=d.getDate();
+    var isSel=date===vd, isT=date===TODAY, hp=count>0?(count/total)*100:0;
+    var col=isSel?"#1A3C2A":(isT?"#3F7A52":"#837B72");
+    out+='<div class="wk-col'+(isSel?" sel":"")+'" data-act="setdate" data-val="'+date+'"><div class="wk-dl" style="color:'+col+';font-weight:'+(isSel?700:500)+'">'+dl+'</div><div class="wk-bg"><div class="wk-fill" style="height:'+hp+'%;background:'+(isSel?"#1A3C2A":"#86EFAC")+';min-height:'+(count>0?3:0)+'px"></div></div><div class="wk-dn" style="color:'+col+';font-weight:'+(isSel?700:400)+'">'+dn+'</div></div>';
+  });
+  out+='</div></div>';
+
+  var vr=varietyCounts();
+  out+='<div class="lst-ttl">🔄 Variedad de hidratos · esta semana</div>';
+  ["dinar","sopar"].forEach(function(mk){
+    out+='<div class="var-card"><div class="var-head">'+MEAL_META[mk].icon+' En '+MEAL_META[mk].label.toLowerCase()+'</div>';
+    HID_TARGETS[mk].forEach(function(g){
+      var cnt=(vr[mk]||{})[g.id]||0, ev=vEval(cnt,g.min,g.max), tgt=g.min===0?("máx "+g.max):(g.min+"-"+g.max);
+      out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span><span class="var-tgt">obj '+tgt+'</span><span class="var-st '+ev.cls+'">'+ev.txt+'</span></div>';
+    });
+    out+='</div>';
+  });
+  out+='<div class="var-hint">Marca el hidrato en cada comida y cena para ver tu rotación semanal. El objetivo del plan es no repetir siempre el mismo grupo.</div>';
+
+  out+='<button class="export-btn" data-act="export">'+(state.exportOpen?"✕ Cerrar backup":"⬇︎ Exportar mis datos (backup)")+'</button>';
+  if(state.exportOpen){
+    out+='<div class="export-box"><div class="export-bar"><span>Copia y guarda este texto</span><button data-act="copy">'+(state.copied?"¡Copiado!":"Copiar")+'</button></div><textarea class="export-ta" readonly>'+state.exportText+'</textarea></div>';
+  }
+  out+='<div class="disclaimer">ℹ️ Tus datos se guardan solo en este dispositivo. Usa el backup periódicamente para no perderlos.</div>';
+  return out;
+}
+
+function vNav(){
+  var out='<nav class="bnav">';
+  TABS.forEach(function(t){ out+='<button class="bni'+(state.tab===t.id?" on":"")+'" data-act="tab" data-val="'+t.id+'"><span class="bni-ico">'+t.icon+'</span><span class="bni-lbl">'+t.label+'</span></button>'; });
+  out+='</nav>';
+  return out;
+}
+
+function view(){
+  var content = state.tab==="plan"?vPlan():state.tab==="opciones"?vOpciones():vHoy();
+  return '<div class="app">'+vHeader()+'<div class="scroll">'+content+'</div>'+vNav()+'</div>';
+}
+
+var lastTab=null;
+function render(){
+  var sc=document.querySelector(".scroll"), st=sc?sc.scrollTop:0;
+  var sameTab=lastTab===state.tab;
+  document.getElementById("app").innerHTML=view();
+  var ns=document.querySelector(".scroll");
+  if(ns&&sameTab) ns.scrollTop=st;
+  lastTab=state.tab;
+}
+
+// ── Events ──
+document.getElementById("app").addEventListener("click", function(e){
+  var el=e.target.closest("[data-act]"); if(!el) return;
+  var act=el.dataset.act, val=el.dataset.val;
+  if(act==="tab"){ state.tab=val; }
+  else if(act==="planview"){ state.planView=val; }
+  else if(act==="openmeal"){ state.openMeal=state.openMeal===val?null:val; }
+  else if(act==="theory"){ state.openTheory=state.openTheory===val?null:val; }
+  else if(act==="optfilter"){ state.optFilter=val; state.openGroup=null; }
+  else if(act==="optgroup"){ state.openGroup=state.openGroup===val?null:val; }
+  else if(act==="toggle"){ var t=Object.assign({},state.tracking); t[val]=!t[val]; state.tracking=t; saveDay(state.viewDate,t); }
+  else if(act==="hid"){ var meal=el.dataset.meal, field=meal==="dinar"?"dinarH":"soparH"; var t2=Object.assign({},state.tracking); t2[field]=t2[field]===val?null:val; t2[meal]=true; state.tracking=t2; saveDay(state.viewDate,t2); }
+  else if(act==="date"){ var nd=shiftDate(state.viewDate, parseInt(val,10)); if(parseInt(val,10)>0 && nd>TODAY) return; state.viewDate=nd; state.tracking=loadDay(nd); }
+  else if(act==="today"){ state.viewDate=TODAY; state.tracking=loadDay(TODAY); }
+  else if(act==="setdate"){ state.viewDate=val; state.tracking=loadDay(val); }
+  else if(act==="export"){ state.exportOpen=!state.exportOpen; if(state.exportOpen){ state.exportText=buildExport(); state.copied=false; } }
+  else if(act==="copy"){ try{ navigator.clipboard.writeText(state.exportText); state.copied=true; }catch(err){} }
+  render();
+});
+
+render();
+
+// ── Service worker (offline) ──
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){ navigator.serviceWorker.register("./sw.js").catch(function(){}); });
+}
+</script>
+</body>
+</html>
