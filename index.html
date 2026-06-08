@@ -285,7 +285,7 @@ function varietyCounts(){ var out={dinar:{},sopar:{}},base=new Date(); for(var i
 function buildExport(){ var days={},base=new Date(); for(var i=0;i<30;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); if(r)days[k]=JSON.parse(r); } return JSON.stringify(days,null,2); }
 
 // ── State ──
-var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false };
+var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false, importOpen:false, importMsg:"" };
 
 // ── View builders ──
 function vHeader(){
@@ -403,6 +403,10 @@ function vHoy(){
   if(state.exportOpen){
     out+='<div class="export-box"><div class="export-bar"><span>Copia y guarda este texto</span><button data-act="copy">'+(state.copied?"¡Copiado!":"Copiar")+'</button></div><textarea class="export-ta" readonly>'+state.exportText+'</textarea></div>';
   }
+  out+='<button class="export-btn" data-act="import">'+(state.importOpen?"✕ Cerrar importación":"⬆︎ Importar datos (desde otro dispositivo)")+'</button>';
+  if(state.importOpen){
+    out+='<div class="export-box"><div class="export-bar"><span>Pega aquí el texto del backup</span><button data-act="doimport">Importar ahora</button></div><textarea class="export-ta" id="importTA" placeholder=\'{"2026-06-01": { ... }, ...}\'></textarea>'+(state.importMsg?'<div style="font-size:12px;font-weight:600;margin-top:8px;color:'+(state.importMsg.charAt(0)==="✓"?"#166534":"#991B1B")+'">'+state.importMsg+'</div>':'')+'</div>';
+  }
   out+='<div class="disclaimer">ℹ️ Tus datos se guardan solo en este dispositivo. Usa el backup periódicamente para no perderlos.</div>';
   return out;
 }
@@ -446,6 +450,17 @@ document.getElementById("app").addEventListener("click", function(e){
   else if(act==="setdate"){ state.viewDate=val; state.tracking=loadDay(val); }
   else if(act==="export"){ state.exportOpen=!state.exportOpen; if(state.exportOpen){ state.exportText=buildExport(); state.copied=false; } }
   else if(act==="copy"){ try{ navigator.clipboard.writeText(state.exportText); state.copied=true; }catch(err){} }
+  else if(act==="import"){ state.importOpen=!state.importOpen; state.importMsg=""; }
+  else if(act==="doimport"){
+    var ta=document.getElementById("importTA"); var raw=ta?ta.value.trim():"";
+    if(!raw){ state.importMsg="✗ Pega primero el texto del backup."; }
+    else { try {
+      var obj=JSON.parse(raw); var n=0;
+      Object.keys(obj).forEach(function(k){ if(/^\d{4}-\d{2}-\d{2}$/.test(k) && obj[k] && typeof obj[k]==="object"){ saveDay(k,obj[k]); n++; } });
+      state.tracking=loadDay(state.viewDate);
+      state.importMsg = n>0 ? ("✓ Importados "+n+" días. ¡Listo!") : "✗ No encontré días válidos en ese texto.";
+    } catch(err){ state.importMsg="✗ El texto no es un backup válido (debe ser el JSON exportado)."; } }
+  }
   render();
 });
 
