@@ -133,6 +133,31 @@ html, body { background: #F5F0E8; }
 .var-st.lo { background:#FEF3C7; color:#92400E; }
 .var-st.hi { background:#FEE2E2; color:#991B1B; }
 .var-hint { font-size:11px; color:var(--mu); line-height:1.5; margin:4px 2px 0; }
+.cal-nav { display:flex; align-items:center; gap:10px; background:var(--wh); border-radius:12px; padding:8px 10px; margin-bottom:12px; box-shadow:var(--sh); }
+.cal-nav .dn-center { flex:1; text-align:center; }
+.cal-mon { font-size:15px; font-weight:600; color:var(--tx); text-transform:capitalize; }
+.cal-card { background:var(--wh); border-radius:14px; padding:14px 12px; box-shadow:var(--sh); margin-bottom:14px; }
+.cal-wd { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:6px; }
+.cal-wd span { text-align:center; font-size:10px; font-weight:600; color:var(--fa); text-transform:uppercase; }
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+.cal-cell { aspect-ratio:1/1; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; cursor:pointer; position:relative; background:#F4F1EB; color:var(--tx); }
+.cal-cell.empty { background:transparent; cursor:default; }
+.cal-cell.future { opacity:.32; cursor:default; }
+.cal-cell.sel { box-shadow:0 0 0 2px var(--green); }
+.cal-cell.today { outline:2px dashed var(--gold); outline-offset:-3px; }
+.cal-cell .cc-num { position:relative; z-index:2; }
+.cal-cell.lvl0 { background:#F4F1EB; color:#A59E94; }
+.cal-cell.lvl1 { background:#D8EFE2; }
+.cal-cell.lvl2 { background:#A7DBC0; }
+.cal-cell.lvl3 { background:#5FB088; color:#fff; }
+.cal-cell.lvl4 { background:#1A3C2A; color:#fff; }
+.cal-legend { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:12px; font-size:10px; color:var(--fa); }
+.cal-legend i { width:14px; height:14px; border-radius:4px; display:inline-block; }
+.sum-card { background:var(--wh); border-radius:12px; padding:14px; margin-bottom:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
+.sum-kpis { display:flex; gap:10px; margin-bottom:4px; }
+.sum-kpi { flex:1; text-align:center; background:var(--gl); border-radius:10px; padding:10px 6px; }
+.sum-kpi-n { font-family:var(--serif); font-size:22px; font-weight:600; color:var(--green); line-height:1; }
+.sum-kpi-l { font-size:10px; color:var(--mu); margin-top:4px; }
 .export-btn { width:100%; margin-top:12px; padding:11px; border-radius:10px; border:1.5px dashed var(--bd); background:transparent; color:var(--mu); font-size:12.5px; font-weight:500; cursor:pointer; font-family:var(--sans); }
 .export-box { background:var(--wh); border-radius:12px; padding:12px; margin-top:8px; box-shadow:0 1px 3px rgba(0,0,0,.05); }
 .export-bar { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:11.5px; color:var(--mu); }
@@ -177,11 +202,11 @@ var PLAN={
       {icon:"🥩",label:"1/3 Proteína",desc:"3-4d carne magra/pescado blanco · 1-2d carne roja/pez azul · 1-2d huevos"},
       {icon:"🥦",label:"1/3 Verdura",desc:"Mezcla de colores y grupos a lo largo de la semana"}
     ]},
-    {kind:"note",text:"Postre: mandarina + café con bebida de avena"}
+    {kind:"note",text:"Postre: 100g de fruta (cerezas, albaricoques, ciruelas, melón o sandía) + café con bebida de avena"}
   ],
   berenar:[{kind:"opts",blocks:[
-    {title:"⚡ Si vienes de entrenar",items:["⭐ Yogur proteico + manzana o pera (opción prioritaria)","Bocadillo de bonito / ventresca en aceite","Batido proteico + manzana o plátano"]},
-    {title:"🧘 Si no entrenas — 2 snacks",items:["16h — Yogur + fruta (naranja / manzana / pera / mandarinas) + frutos secos o crema de cacahuete 100% + chocolate 85%","18:30h — Tostada salada: pavo o queso semi + ¼ aguacate (o doble ración)"]}
+    {title:"⚡ Si vienes de entrenar",items:["⭐ Yogur proteico + fruta: manzana, pera, melocotón, nectarina o ciruela grande (opción prioritaria)","Bocadillo de bonito / ventresca en aceite","Batido proteico + manzana o plátano"]},
+    {title:"🧘 Si no entrenas — 2 snacks",items:["16h — Yogur + fruta (manzana, pera, melocotón, nectarina, ciruela) + frutos secos o crema de cacahuete 100% + chocolate 85%","18:30h — Tostada salada: pavo o queso semi + ¼ aguacate (o doble ración)"]}
   ]}],
   sopar:[
     {kind:"thirds",items:[
@@ -189,7 +214,7 @@ var PLAN={
       {icon:"🥚",label:"1/3 Proteína",desc:"3-4d huevos (prioritario en cena) · 2-3d carne magra/pescado blanco · 1-2d carne roja/pez azul"},
       {icon:"🥗",label:"1/3 Verdura",desc:"Mezcla de colores y grupos"}
     ]},
-    {kind:"note",text:"Postre: yogur con kiwi o uva. Si ya tomaste yogur en merienda → solo la fruta"}
+    {kind:"note",text:"Postre: yogur con fruta fresca (kiwi, uva, albaricoque, ciruela o fresas). Si ya tomaste yogur en merienda → solo la fruta"}
   ]
 };
 
@@ -207,21 +232,21 @@ var OPTIONS={
     {g:"Opción 3 — Sin snack",ico:"💤",items:[{t:"Solo si desayunaste porridge (Plan B)",n:"El porridge lleva más grasa y fibra → retrasa el hambre 2-3h extra"}]}
   ],
   dinar:[
-    {g:"Hidratos — rotar semana",ico:"🌾",freq:"1-2d legumbre · 2-3d patata · 2-3d arroz/pasta",items:[{t:"Lentejas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Garbanzos",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Alubias blancas o pintas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Patata cocida",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Patata al horno",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Arroz blanco",n:"Fácil de digerir · Bueno días de entreno duro"},{t:"Arroz integral",n:"Más fibra · Mejor para microbiota"},{t:"Pasta (blanca o integral)",n:"Compartir frecuencia semanal con el arroz"}]},
+    {g:"Hidratos — rotar semana",ico:"🌾",freq:"1-2d legumbre · 2-3d patata · 2-3d arroz/pasta",items:[{t:"Lentejas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Garbanzos",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Alubias blancas o pintas",n:"1-2 días/semana · Proteína vegetal + fibra microbiota"},{t:"Patata cocida",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Patata al horno",n:"2-3 días/semana · Vitamina C + potasio"},{t:"Boniato cocido o al horno",n:"Alternativa a la patata · Vitamina A + fibra"},{t:"Arroz blanco",n:"Fácil de digerir · Bueno días de entreno duro"},{t:"Arroz integral",n:"Más fibra · Mejor para microbiota"},{t:"Pasta (blanca o integral)",n:"Compartir frecuencia semanal con el arroz"}]},
     {g:"Proteína — rotar semana",ico:"🥩",freq:"3-4d carne magra/pez blanco · 1-2d carne roja/pez azul · 1-2d huevos",items:[{t:"Pechuga de pollo",n:"Carne magra · 3-4 días/semana"},{t:"Pavo (filete o lonchas)",n:"Carne magra · 3-4 días/semana"},{t:"Merluza",n:"Pescado blanco · 3-4 días/semana"},{t:"Bacalao fresco",n:"Pescado blanco · 3-4 días/semana"},{t:"Lenguado",n:"Pescado blanco · 3-4 días/semana"},{t:"Ternera / carne roja",n:"Máx. 1-2 días/semana · Hierro hem"},{t:"Salmón",n:"Pescado azul · 1-2 días/semana · Omega-3"},{t:"Atún fresco",n:"Pescado azul · 1-2 días/semana · Omega-3"},{t:"Huevos (2-3)",n:"1-2 días/semana opcional en comida"}]},
     {g:"Verdura",ico:"🥦",items:[{t:"Espinacas, acelgas, rúcula, canónigos",n:"Grupo hoja"},{t:"Pimiento rojo, zanahoria, calabaza",n:"Grupo vitamina A"},{t:"Brócoli, coliflor, col rizada, col blanca, col china",n:"Grupo calcio · Objetivo del plan: incorporar más"}]},
-    {g:"Postre",ico:"🍊",items:[{t:"Mandarina",n:"Vitamina C + digestión"},{t:"Café con bebida de avena",n:""}]}
+    {g:"Postre",ico:"🍒",items:[{t:"Cerezas (100g)",n:"Fruta de temporada"},{t:"Albaricoques",n:"Fruta de temporada"},{t:"Ciruelas",n:"Fruta de temporada"},{t:"Melón o sandía",n:"Hidratante en verano"},{t:"Café con bebida de avena",n:""}]}
   ],
   berenar:[
-    {g:"Si entrenas — elige uno",ico:"⚡",items:[{t:"Yogur proteico + manzana o pera",n:"⭐ Prioritario: proteína rápida + glucógeno"},{t:"Bocadillo de bonito en aceite",n:"Alternativa sólida"},{t:"Bocadillo de ventresca en aceite",n:"Alternativa sólida"},{t:"Batido proteico HSN Evobeef + manzana",n:"Si no apetece sólido"},{t:"Batido proteico HSN Evobeef + plátano",n:"Si no apetece sólido"}]},
-    {g:"16h snack (si no entrenas)",ico:"🍎",items:[{t:"Yogur (normal u opcional proteico)",n:""},{t:"Naranja",n:"Vitamina C"},{t:"Manzana",n:""},{t:"Pera",n:""},{t:"2 mandarinas",n:""},{t:"Puñado de frutos secos (almendra/nueces/cacahuete)",n:""},{t:"Crema de cacahuete o almendra 100%",n:"Sin azúcar añadido"},{t:"Chocolate 85% (2 onzas)",n:""}]},
+    {g:"Si entrenas — elige uno",ico:"⚡",items:[{t:"Yogur proteico + fruta (manzana, pera, melocotón, nectarina, ciruela)",n:"⭐ Prioritario: proteína rápida + glucógeno"},{t:"Bocadillo de bonito en aceite",n:"Alternativa sólida"},{t:"Bocadillo de ventresca en aceite",n:"Alternativa sólida"},{t:"Batido proteico HSN Evobeef + manzana",n:"Si no apetece sólido"},{t:"Batido proteico HSN Evobeef + plátano",n:"Si no apetece sólido"}]},
+    {g:"16h snack (si no entrenas)",ico:"🍎",items:[{t:"Yogur (normal u opcional proteico)",n:""},{t:"Naranja",n:"Vitamina C"},{t:"Manzana",n:""},{t:"Pera",n:""},{t:"2 mandarinas",n:""},{t:"Melocotón",n:"IG medio · saciante"},{t:"Nectarina",n:"IG medio · saciante"},{t:"Ciruela grande",n:"IG medio · saciante"},{t:"Puñado de frutos secos (almendra/nueces/cacahuete)",n:""},{t:"Crema de cacahuete o almendra 100%",n:"Sin azúcar añadido"},{t:"Chocolate 85% (2 onzas)",n:""}]},
     {g:"18:30h tostada (si no entrenas)",ico:"🍞",items:[{t:"Pan + pavo + ¼ aguacate",n:""},{t:"Pan + queso semi + ¼ aguacate",n:""},{t:"Doble ración si tienes más hambre",n:""}]}
   ],
   sopar:[
     {g:"Hidratos — rotar semana",ico:"🍞",freq:"3-4d pan · 2-3d patata · 1-2d legumbre/quinoa · algún día pizza/wrap/pasta",items:[{t:"Pan (80g)",n:"3-4 noches/semana · Prioritario en cena"},{t:"Patata cocida o al horno",n:"2-3 noches/semana"},{t:"Lentejas o garbanzos",n:"1-2 noches/semana"},{t:"Quinoa",n:"1-2 noches/semana · Proteína vegetal extra"},{t:"Pizza casera (masa fina)",n:"Variedad · Ocasional"},{t:"Wrap o tortilla de trigo",n:"Variedad · Ocasional"},{t:"Pasta",n:"Variedad · Ocasional"}]},
     {g:"Proteína — rotar semana",ico:"🥚",freq:"3-4d huevos · 2-3d carne magra/pez blanco · 1-2d carne roja/pez azul",items:[{t:"Huevos (2-3 unidades)",n:"3-4 noches/semana · Prioritario en cena"},{t:"Pollo o pavo a la plancha",n:"2-3 noches/semana"},{t:"Merluza o bacalao",n:"2-3 noches/semana"},{t:"Salmón",n:"1-2 noches/semana · Omega-3"},{t:"Atún fresco o en conserva",n:"1-2 noches/semana"},{t:"Sardinas",n:"1-2 noches/semana · Calcio + omega-3"}]},
     {g:"Verdura",ico:"🥗",items:[{t:"Espinacas salteadas con ajo",n:"Grupo hoja · 3 min"},{t:"Rúcula o canónigos en crudo",n:"Grupo hoja · Sin cocción"},{t:"Brócoli o coliflor al vapor",n:"Grupo calcio · 5 min"},{t:"Col salteada o en ensalada",n:"Grupo calcio · Objetivo del plan"},{t:"Pimiento asado, zanahoria, calabaza",n:"Grupo vitamina A"}]},
-    {g:"Postre",ico:"🍇",items:[{t:"Yogur con kiwi o uva",n:"Solo si NO tomaste yogur en merienda"},{t:"Kiwi, uva o frambuesas (solo fruta)",n:"Si ya tomaste yogur en merienda"}]}
+    {g:"Postre",ico:"🍇",items:[{t:"Yogur con fruta (kiwi, uva, albaricoque, ciruela, fresas)",n:"Solo si NO tomaste yogur en merienda"},{t:"Solo fruta (kiwi, uva, albaricoque, ciruela, fresas)",n:"Si ya tomaste yogur en merienda"}]}
   ]
 };
 
@@ -233,7 +258,7 @@ var THEORY=[
   ],footer:"La verdura no es guarnición — es 1/3 real del plato. Sin ella el equilibrio se rompe y el plato queda incompleto nutricionalmente."},
   {id:"ig",ico:"📈",title:"Índice Glucémico (IG)",sub:"Por qué la fruta no es igual a cualquier hora",points:[
     {ico:"🍌",b:"IG alto (plátano, piña, mango)",t:"Suben el azúcar en sangre rápido → energía inmediata. Ideales por la mañana cuando el cuerpo necesita 'arrancar'. A esa hora el pico de insulina no es problema porque viene actividad."},
-    {ico:"🍎",b:"IG medio (manzana, pera)",t:"Absorción más lenta → energía sostenida y saciedad duradera. Perfectas para media tarde: sacian hasta la cena sin generar pico de insulina que después cause hambre."},
+    {ico:"🍎",b:"IG medio (manzana, pera, melocotón, nectarina, ciruela)",t:"Absorción más lenta → energía sostenida y saciedad duradera. Perfectas para media tarde: sacian hasta la cena sin generar pico de insulina que después cause hambre."},
     {ico:"🍊",b:"Vitamina C (kiwi, naranja, mandarina)",t:"No es solo cuestión de IG: su vitamina C potencia la absorción del hierro no hemo del bocadillo (pavo, jamón) hasta ×3. Por eso van juntos en el desayuno, no es casualidad."}
   ],footer:null},
   {id:"hidratos",ico:"🌾",title:"Por qué rotar los hidratos",sub:"Legumbre vs patata vs arroz/pasta — cada uno da cosas distintas",points:[
@@ -273,7 +298,7 @@ var HID_TARGETS={
 };
 function vEval(c,min,max){ if(c<min)return{cls:"lo",txt:"faltan "+(min-c)}; if(c>max)return{cls:"hi",txt:"de más"}; return{cls:"ok",txt:"✓ ok"}; }
 
-var TABS=[{id:"plan",icon:"📋",label:"Plan"},{id:"opciones",icon:"🥘",label:"Opciones"},{id:"hoy",icon:"✅",label:"Hoy"}];
+var TABS=[{id:"plan",icon:"📋",label:"Plan"},{id:"opciones",icon:"🥘",label:"Opciones"},{id:"hoy",icon:"✅",label:"Hoy"},{id:"historial",icon:"📅",label:"Historial"}];
 
 // ── Storage (localStorage) ──
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
@@ -285,11 +310,40 @@ function varietyCounts(){ var out={dinar:{},sopar:{}},base=new Date(); for(var i
 function buildExport(){ var days={},base=new Date(); for(var i=0;i<30;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); if(r)days[k]=JSON.parse(r); } return JSON.stringify(days,null,2); }
 
 // ── State ──
-var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false, importOpen:false, importMsg:"" };
+var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, calMonth:TODAY.slice(0,7), tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false, importOpen:false, importMsg:"" };
+
+// ── Calendar / month helpers ──
+var MONTH_NAMES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+function monthShift(ym,delta){ var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1+delta; var d=new Date(y,m,1); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
+function dayCount(dateStr){ var r=lsGet("nut:"+dateStr); if(!r)return 0; var p=JSON.parse(r); var n=0; for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]])n++; } return n; }
+function monthCells(ym){
+  var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1;
+  var first=new Date(y,m,1), startDow=(first.getDay()+6)%7; // Monday=0
+  var nDays=new Date(y,m+1,0).getDate();
+  var cells=[];
+  for(var i=0;i<startDow;i++) cells.push(null);
+  for(var d=1;d<=nDays;d++){ cells.push(y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0")); }
+  while(cells.length%7!==0) cells.push(null);
+  return cells;
+}
+function monthSummary(ym){
+  var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1, nDays=new Date(y,m+1,0).getDate();
+  var out={ daysLogged:0, mealsDone:0, dinar:{}, sopar:{} };
+  for(var d=1;d<=nDays;d++){
+    var k=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
+    var r=lsGet("nut:"+k); if(!r)continue;
+    var p=JSON.parse(r), any=false, c=0;
+    for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]]){c++;any=true;} }
+    out.mealsDone+=c; if(any)out.daysLogged++;
+    if(p.dinarH)out.dinar[p.dinarH]=(out.dinar[p.dinarH]||0)+1;
+    if(p.soparH)out.sopar[p.soparH]=(out.sopar[p.soparH]||0)+1;
+  }
+  return out;
+}
 
 // ── View builders ──
 function vHeader(){
-  var H={ plan:["Mi Plan Nutricional","Dr. Carles Mas · Mantenimiento muscular"], opciones:["Opciones por Comida","Todos los ingredientes del plan"], hoy:["Seguimiento", cap(new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}))] };
+  var H={ plan:["Mi Plan Nutricional","Dr. Carles Mas · Mantenimiento muscular"], opciones:["Opciones por Comida","Todos los ingredientes del plan"], hoy:["Seguimiento", cap(new Date().toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"long"}))], historial:["Historial","Calendario y resumen mensual"] };
   var h=H[state.tab];
   return '<div class="hdr"><div class="hdr-t">'+h[0]+'</div><div class="hdr-s">'+h[1]+'</div></div>';
 }
@@ -318,7 +372,7 @@ function vPlan(){
     });
     out+='<div class="lst-ttl">🥦 Listas de Referencia</div>'+
       '<div class="lst-grp"><div class="lst-gt">Grupos de Verdura</div><div class="lst-gb">🌿 <strong>Hoja:</strong> espinacas, acelgas, canónigos, rúcula<br>🧡 <strong>Vitamina A:</strong> pimiento rojo, zanahoria, calabaza<br>💚 <strong>Calcio:</strong> brócoli, coliflor, col rizada, col blanca, col china</div></div>'+
-      '<div class="lst-grp"><div class="lst-gt">Frutas por Momento del Día</div><div class="lst-gb">🍊 <strong>Absorción de hierro:</strong> naranja, mandarina, kiwi<br>🍌 <strong>Mañana — IG alto:</strong> plátano, piña, mango<br>🍎 <strong>Tarde — saciante IG medio:</strong> manzana, pera<br>🫐 <strong>Sin calorías extra:</strong> arándanos, frambuesas, fresas</div></div>';
+      '<div class="lst-grp"><div class="lst-gt">Frutas por Momento del Día</div><div class="lst-gb">🍊 <strong>Absorción de hierro:</strong> naranja, mandarina, kiwi<br>🍌 <strong>Mañana — IG alto:</strong> plátano, piña, mango<br>🍎 <strong>Tarde — saciante IG medio:</strong> manzana, pera, melocotón, nectarina, ciruelas, albaricoques<br>🫐 <strong>Sin calorías extra:</strong> arándanos, frambuesas, moras, fresas</div></div>';
   } else {
     THEORY.forEach(function(card){
       var isOpen=state.openTheory===card.id;
@@ -411,6 +465,49 @@ function vHoy(){
   return out;
 }
 
+function vHistorial(){
+  var ym=state.calMonth, y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1;
+  var canNextMon = ym < TODAY.slice(0,7);
+  var cells=monthCells(ym);
+  var wd=["L","M","X","J","V","S","D"];
+  function lvl(c){ if(c<=0)return 0; if(c<=1)return 1; if(c<=2)return 2; if(c<=4)return 3; return 4; }
+
+  var out='<div class="cal-nav"><button class="dn-arrow" data-act="calprev">‹</button><div class="dn-center"><div class="cal-mon">'+MONTH_NAMES[m]+' '+y+'</div></div><button class="dn-arrow" data-act="calnext"'+(canNextMon?'':' disabled')+'>›</button></div>';
+
+  out+='<div class="cal-card"><div class="cal-wd">';
+  wd.forEach(function(d){ out+='<span>'+d+'</span>'; });
+  out+='</div><div class="cal-grid">';
+  cells.forEach(function(dateStr){
+    if(!dateStr){ out+='<div class="cal-cell empty"></div>'; return; }
+    var dn=parseInt(dateStr.slice(8,10),10);
+    if(dateStr>TODAY){ out+='<div class="cal-cell future"><span class="cc-num">'+dn+'</span></div>'; return; }
+    var c=dayCount(dateStr);
+    var cls="cal-cell lvl"+lvl(c)+(dateStr===state.viewDate?" sel":"")+(dateStr===TODAY?" today":"");
+    out+='<div class="'+cls+'" data-act="calday" data-val="'+dateStr+'"><span class="cc-num">'+dn+'</span></div>';
+  });
+  out+='</div><div class="cal-legend"><span>menos</span><i style="background:#F4F1EB"></i><i style="background:#D8EFE2"></i><i style="background:#A7DBC0"></i><i style="background:#5FB088"></i><i style="background:#1A3C2A"></i><span>más comidas</span></div></div>';
+
+  // Monthly summary
+  var sm=monthSummary(ym);
+  var isCurMonth = ym===TODAY.slice(0,7);
+  var daysElapsed = isCurMonth ? parseInt(TODAY.slice(8,10),10) : new Date(y,m+1,0).getDate();
+  var pct = daysElapsed>0 ? Math.round(sm.mealsDone/(daysElapsed*5)*100) : 0;
+
+  out+='<div class="lst-ttl">📊 Resumen de '+MONTH_NAMES[m]+'</div>';
+  out+='<div class="sum-card"><div class="sum-kpis"><div class="sum-kpi"><div class="sum-kpi-n">'+sm.daysLogged+'</div><div class="sum-kpi-l">días registrados</div></div><div class="sum-kpi"><div class="sum-kpi-n">'+sm.mealsDone+'</div><div class="sum-kpi-l">comidas marcadas</div></div><div class="sum-kpi"><div class="sum-kpi-n">'+pct+'%</div><div class="sum-kpi-l">adherencia</div></div></div></div>';
+
+  ["dinar","sopar"].forEach(function(mk){
+    out+='<div class="var-card"><div class="var-head">'+MEAL_META[mk].icon+' Hidratos en '+MEAL_META[mk].label.toLowerCase()+' · '+MONTH_NAMES[m]+'</div>';
+    HID_TARGETS[mk].forEach(function(g){
+      var cnt=(sm[mk]||{})[g.id]||0;
+      out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span></div>';
+    });
+    out+='</div>';
+  });
+  out+='<div class="var-hint">Toca cualquier día del calendario para abrirlo y editar su registro. Este resumen mensual es lo que puedes enseñar en tu revisión trimestral.</div>';
+  return out;
+}
+
 function vNav(){
   var out='<nav class="bnav">';
   TABS.forEach(function(t){ out+='<button class="bni'+(state.tab===t.id?" on":"")+'" data-act="tab" data-val="'+t.id+'"><span class="bni-ico">'+t.icon+'</span><span class="bni-lbl">'+t.label+'</span></button>'; });
@@ -419,7 +516,7 @@ function vNav(){
 }
 
 function view(){
-  var content = state.tab==="plan"?vPlan():state.tab==="opciones"?vOpciones():vHoy();
+  var content = state.tab==="plan"?vPlan():state.tab==="opciones"?vOpciones():state.tab==="historial"?vHistorial():vHoy();
   return '<div class="app">'+vHeader()+'<div class="scroll">'+content+'</div>'+vNav()+'</div>';
 }
 
@@ -448,6 +545,9 @@ document.getElementById("app").addEventListener("click", function(e){
   else if(act==="date"){ var nd=shiftDate(state.viewDate, parseInt(val,10)); if(parseInt(val,10)>0 && nd>TODAY) return; state.viewDate=nd; state.tracking=loadDay(nd); }
   else if(act==="today"){ state.viewDate=TODAY; state.tracking=loadDay(TODAY); }
   else if(act==="setdate"){ state.viewDate=val; state.tracking=loadDay(val); }
+  else if(act==="calprev"){ state.calMonth=monthShift(state.calMonth,-1); }
+  else if(act==="calnext"){ if(state.calMonth<TODAY.slice(0,7)) state.calMonth=monthShift(state.calMonth,1); }
+  else if(act==="calday"){ state.viewDate=val; state.tracking=loadDay(val); state.tab="hoy"; }
   else if(act==="export"){ state.exportOpen=!state.exportOpen; if(state.exportOpen){ state.exportText=buildExport(); state.copied=false; } }
   else if(act==="copy"){ try{ navigator.clipboard.writeText(state.exportText); state.copied=true; }catch(err){} }
   else if(act==="import"){ state.importOpen=!state.importOpen; state.importMsg=""; }
