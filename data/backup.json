@@ -1,0 +1,382 @@
+{
+  "schema": "nutri-pol-v2",
+  "app_version": "1.6",
+  "exported": "2026-07-22",
+  "days": {
+    "2026-06-05": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-06": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "legumbre",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-07": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "legumbre"
+    },
+    "2026-06-08": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-06-09": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-10": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-11": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-12": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-13": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-14": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "legumbre"
+    },
+    "2026-06-15": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-16": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "sopar": true,
+      "berenar": true,
+      "soparH": "patata"
+    },
+    "2026-06-17": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "legumbre",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-18": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-19": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-06-20": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-21": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-22": {
+      "matina": true,
+      "desayuno": true,
+      "dinar": true,
+      "dinarH": "legumbre",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-06-23": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-24": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-25": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-06-26": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-06-27": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-28": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-29": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-06-30": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-07-01": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-07-02": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "legumbre",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-07-03": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-07-04": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan"
+    },
+    "2026-07-05": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-07-06": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan",
+      "soparV": "vitA"
+    },
+    "2026-07-07": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "dinarV": "hoja",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata",
+      "soparV": "vitA"
+    },
+    "2026-07-08": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "dinarV": "vitA",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-07-09": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-07-10": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "pan",
+      "soparV": "vitA"
+    },
+    "2026-07-11": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    },
+    "2026-07-12": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": false
+    },
+    "2026-07-13": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "legumbre",
+      "dinarV": "hoja",
+      "berenar": true,
+      "sopar": true,
+      "soparV": "crucifera",
+      "soparH": "pan"
+    },
+    "2026-07-14": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "otro"
+    },
+    "2026-07-15": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "arroz",
+      "berenar": true,
+      "sopar": true,
+      "soparH": "patata"
+    }
+  }
+}
