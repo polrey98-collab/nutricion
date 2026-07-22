@@ -1,5 +1,5 @@
 // IMPORTANTE: subir este número cada vez que se despliegue un cambio (va en pareja con APP_VERSION del index.html)
-const CACHE = "nutri-pol-v3";
+const CACHE = "nutri-pol-v4";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -50,9 +50,6 @@ self.addEventListener("fetch", (e) => {
           return resp;
         })
         .catch(() => undefined);
-    })
-  );
-});
     })
   );
 });
