@@ -1,4 +1,5 @@
-const CACHE = "nutri-pol-v2";
+// IMPORTANTE: subir este número cada vez que se despliegue un cambio (va en pareja con APP_VERSION del index.html)
+const CACHE = "nutri-pol-v3";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -39,13 +40,19 @@ self.addEventListener("fetch", (e) => {
       return fetch(req)
         .then((resp) => {
           const url = req.url;
-          if (resp && resp.status === 200 && (url.startsWith(self.location.origin) || url.indexOf("fonts.g") !== -1)) {
+          const isFont = url.indexOf("fonts.g") !== -1;
+          // Las peticiones no-CORS a Google Fonts devuelven respuestas "opacas" (status 0): hay que aceptarlas o nunca se cachean
+          const cacheable = resp && (resp.status === 200 || (isFont && resp.type === "opaque"));
+          if (cacheable && (url.startsWith(self.location.origin) || isFont)) {
             const copy = resp.clone();
             caches.open(CACHE).then((c) => c.put(req, copy));
           }
           return resp;
         })
         .catch(() => undefined);
+    })
+  );
+});
     })
   );
 });
