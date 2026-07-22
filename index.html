@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; manifest-src 'self'; worker-src 'self'; connect-src 'self'" />
 <title>Nutrición Pol</title>
 <meta name="theme-color" content="#1A3C2A" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -94,7 +95,10 @@ html, body { background: #F5F0E8; }
 .comp-r { flex:1; }
 .comp-pc { font-family:var(--serif); font-size:26px; font-weight:600; color:var(--green); line-height:1.1; }
 .comp-sb { font-size:12px; color:var(--fa); margin-top:2px; }
-.gym-badge { display:inline-block; margin-top:8px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.gym-badge { display:inline-block; margin-top:8px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; border:none; cursor:pointer; font-family:var(--sans); }
+.gym-sub { display:block; font-size:9px; font-weight:500; opacity:.65; margin-top:1px; }
+.chip.prot.on { background:#A65B2A; border-color:#A65B2A; }
+.meal-hint { font-size:11px; color:var(--mu); line-height:1.4; margin:4px 6px 0; }
 .gym-badge.on { background:#FEF3C7; color:#92400E; }
 .gym-badge.off { background:#EEF2FF; color:#3730A3; }
 .trk-wrap { margin-bottom:7px; }
@@ -177,14 +181,15 @@ function localDateStr(d){ d=d||new Date(); var y=d.getFullYear(), m=String(d.get
 function shiftDate(s,delta){ var d=new Date(s+"T12:00:00"); d.setDate(d.getDate()+delta); return localDateStr(d); }
 function dowOf(s){ return new Date(s+"T12:00:00").getDay(); }
 function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
-function currentMeal(){ var h=new Date().getHours(); if(h<10)return"desayuno"; if(h<12)return"matina"; if(h<16)return"dinar"; if(h<19)return"berenar"; return"sopar"; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function currentMeal(){ var h=new Date().getHours(); if(h<10)return"desayuno"; if(h<12)return"matina"; if(h<16)return"dinar"; if(h<20)return"berenar"; return"sopar"; }
 var TODAY=localDateStr(), NOW_MEAL=currentMeal();
-var APP_VERSION="1.4", APP_DATE="07 jul 2026";
+var APP_VERSION="1.5", APP_DATE="22 jul 2026"; // Recuerda: al cambiar APP_VERSION, sube también CACHE en sw.js
 var MEAL_META={
 desayuno:{label:"Desayuno",icon:"🌅",time:"7–9h",color:"#F59E0B"},
 matina:{label:"Media Mañana",icon:"🍎",time:"~11h",color:"#10B981"},
 dinar:{label:"Comida",icon:"☀️",time:"13h",color:"#F97316"},
-berenar:{label:"Merienda",icon:"⚡",time:"16–18h",color:"#8B5CF6"},
+berenar:{label:"Merienda",icon:"⚡",time:"16–18:30h",color:"#8B5CF6"},
 sopar:{label:"Cena",icon:"🌙",time:"20–22h",color:"#3B82F6"}
 };
 var MEAL_IDS=["desayuno","matina","dinar","berenar","sopar"];
@@ -276,7 +281,7 @@ var THEORY=[
 ],footer:"3-4 noches/semana de huevos descansa el sistema digestivo de carnes pesadas y diversifica el aporte de micronutrientes (B12, D, colina)."},
 {id:"recovery",ico:"⚡",title:"La ventana post-entreno",sub:"Por qué el yogur proteico es la opción 1",points:[
 {ico:"⏱️",b:"La ventana anabólica (30-90 min)",t:"Después de entrenar el músculo está en su momento más receptivo para absorber nutrientes y activar la síntesis proteica. Aprovecharlo acelera la recuperación."},
-{ico:"🥛",b:"Proteína rápida (yogur)",t:"Activa inmediatamente la síntesis proteica muscular. En tu caso: yogur proteico o HSN Evobeef (carne hidrolizada). NO whey — sensibilidad al suero de leche."},
+{ico:"🥛",b:"Proteína rápida (yogur)",t:"Activa inmediatamente la síntesis proteica muscular. En tu caso: yogur proteico o HSN Evobeef (carne hidrolizada), que son las opciones marcadas en tu plan."},
 {ico:"🍎",b:"Carbohidrato simple (fruta)",t:"Repone el glucógeno (energía almacenada en músculo) que acabas de gastar. La fructosa de la fruta es de absorción rápida, ideal para esta ventana."}
 ],footer:"El bonito funciona pero es subóptimo: proteína de digestión más lenta y sin carbohidrato rápido. Sirve como plan B cuando no hay yogur."},
 {id:"grasas",ico:"🥑",title:"Las grasas del plan",sub:"Aguacate, frutos secos y AOVE — función de cada uno",points:[
@@ -299,6 +304,18 @@ dinar:[{id:"legumbre",ico:"🫘",label:"Legumbre",min:1,max:2},{id:"patata",ico:
 sopar:[{id:"pan",ico:"🍞",label:"Pan",min:3,max:4},{id:"patata",ico:"🥔",label:"Patata",min:2,max:3},{id:"legumbre",ico:"🫘",label:"Legumbre/Quinoa",min:1,max:2},{id:"otro",ico:"🍕",label:"Pizza/Wrap/Pasta",min:0,max:2}]
 };
 var VEG_CHIPS=[{id:"hoja",ico:"🌿",label:"Hoja"},{id:"vitA",ico:"🧡",label:"Vit A"},{id:"crucifera",ico:"💚",label:"Crucífera"}];
+var PROT_CHIPS=[{id:"magra",ico:"🍗",label:"Magra/Blanco"},{id:"rojaazul",ico:"🥩",label:"Roja/Azul"},{id:"huevos",ico:"🥚",label:"Huevos"}];
+var PROT_TARGETS={
+dinar:[{id:"magra",ico:"🍗",label:"Carne magra / pescado blanco",min:3,max:4},{id:"rojaazul",ico:"🥩",label:"Carne roja / pescado azul",min:1,max:2},{id:"huevos",ico:"🥚",label:"Huevos",min:0,max:2}],
+sopar:[{id:"huevos",ico:"🥚",label:"Huevos",min:3,max:4},{id:"magra",ico:"🍗",label:"Carne magra / pescado blanco",min:2,max:3},{id:"rojaazul",ico:"🥩",label:"Carne roja / pescado azul",min:1,max:2}]
+};
+var FRUIT_CHIPS=[{id:"hierro",ico:"🍊",label:"Hierro (naranja/mandarina/kiwi)"},{id:"igalto",ico:"🍌",label:"IG alto (plátano/piña/mango)"},{id:"igmedio",ico:"🍎",label:"IG medio (manzana/pera/hueso)"},{id:"rojos",ico:"🫐",label:"Frutos rojos"}];
+var FRUIT_IDS=FRUIT_CHIPS.map(function(c){return c.id;});
+var ENUM_FIELDS={
+dinarH:["legumbre","patata","arroz"], soparH:["pan","patata","legumbre","otro"],
+dinarV:["hoja","vitA","crucifera"], soparV:["hoja","vitA","crucifera"],
+dinarP:["magra","rojaazul","huevos"], soparP:["magra","rojaazul","huevos"]
+};
 var VEG_TARGETS={
 dinar:[{id:"hoja",ico:"🌿",label:"Hoja",min:2,max:null},{id:"vitA",ico:"🧡",label:"Vit A",min:2,max:null},{id:"crucifera",ico:"💚",label:"Crucífera",min:2,max:null}],
 sopar:[{id:"hoja",ico:"🌿",label:"Hoja",min:2,max:null},{id:"vitA",ico:"🧡",label:"Vit A",min:2,max:null},{id:"crucifera",ico:"💚",label:"Crucífera",min:2,max:null}]
@@ -308,17 +325,31 @@ var TABS=[{id:"plan",icon:"📋",label:"Plan"},{id:"opciones",icon:"🥘",label:
 // ── Storage (localStorage) ──
 function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function lsSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
-function loadDay(d){ var r=lsGet("nut:"+d); return r?JSON.parse(r):{}; }
-function saveDay(d,data){ lsSet("nut:"+d, JSON.stringify(data)); }
-function weekCounts(){ var out={},base=new Date(); for(var i=6;i>=0;i--){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); var n=0; if(r){ var p=JSON.parse(r); for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]]) n++; } } out[k]=n; } return out; }
-function varietyCounts(){ var out={dinar:{},sopar:{},dinarV:{},soparV:{}},base=new Date(); for(var i=0;i<7;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var r=lsGet("nut:"+localDateStr(dd)); if(!r)continue; var p=JSON.parse(r); if(p.dinarH)out.dinar[p.dinarH]=(out.dinar[p.dinarH]||0)+1; if(p.soparH)out.sopar[p.soparH]=(out.sopar[p.soparH]||0)+1; if(p.dinarV)out.dinarV[p.dinarV]=(out.dinarV[p.dinarV]||0)+1; if(p.soparV)out.soparV[p.soparV]=(out.soparV[p.soparV]||0)+1; } return out; }
-function buildExport(){ var days={},base=new Date(); for(var i=0;i<30;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var r=lsGet("nut:"+k); if(r)days[k]=JSON.parse(r); } return JSON.stringify(days,null,2); }
+function parseDay(raw){ if(!raw) return {}; try{ var p=JSON.parse(raw); return (p && typeof p==="object" && !Array.isArray(p)) ? p : {}; }catch(e){ return {}; } }
+function sanitizeDay(o){
+var out={};
+MEAL_IDS.forEach(function(id){ if(o[id]===true) out[id]=true; });
+Object.keys(ENUM_FIELDS).forEach(function(f){ if(typeof o[f]==="string" && ENUM_FIELDS[f].indexOf(o[f])>=0) out[f]=o[f]; });
+if(typeof o.gym==="boolean") out.gym=o.gym;
+if(Array.isArray(o.fruta)){ var fr=o.fruta.filter(function(x){ return FRUIT_IDS.indexOf(x)>=0; }); if(fr.length) out.fruta=fr.slice(0,4); }
+return out;
+}
+function loadDay(d){ return parseDay(lsGet("nut:"+d)); }
+function saveDay(d,data){ lsSet("nut:"+d, JSON.stringify(sanitizeDay(data))); }
+function isGymDay(dateStr,rec){ if(rec && typeof rec.gym==="boolean") return rec.gym; return [1,3,5].indexOf(dowOf(dateStr))>=0; }
+function weekCounts(){ var out={},base=new Date(); for(var i=6;i>=0;i--){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var k=localDateStr(dd); var p=parseDay(lsGet("nut:"+k)); var n=0; for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]]) n++; } out[k]=n; } return out; }
+function varietyCounts(){ var out={dinar:{},sopar:{},dinarV:{},soparV:{},dinarP:{},soparP:{},fruta:{}},base=new Date(); for(var i=0;i<7;i++){ var dd=new Date(base); dd.setDate(dd.getDate()-i); var p=parseDay(lsGet("nut:"+localDateStr(dd))); if(p.dinarH)out.dinar[p.dinarH]=(out.dinar[p.dinarH]||0)+1; if(p.soparH)out.sopar[p.soparH]=(out.sopar[p.soparH]||0)+1; if(p.dinarV)out.dinarV[p.dinarV]=(out.dinarV[p.dinarV]||0)+1; if(p.soparV)out.soparV[p.soparV]=(out.soparV[p.soparV]||0)+1; if(p.dinarP)out.dinarP[p.dinarP]=(out.dinarP[p.dinarP]||0)+1; if(p.soparP)out.soparP[p.soparP]=(out.soparP[p.soparP]||0)+1; if(Array.isArray(p.fruta)){ p.fruta.forEach(function(f){ out.fruta[f]=(out.fruta[f]||0)+1; }); } } return out; }
+function allDayKeys(){ var out=[]; try{ for(var i=0;i<localStorage.length;i++){ var k=localStorage.key(i); if(/^nut:\d{4}-\d{2}-\d{2}$/.test(k)) out.push(k.slice(4)); } }catch(e){} return out.sort(); }
+function buildExport(){
+var days={}; allDayKeys().forEach(function(d){ var p=parseDay(lsGet("nut:"+d)); if(Object.keys(p).length) days[d]=p; });
+return JSON.stringify({ schema:"nutri-pol-v2", app_version:APP_VERSION, exported:TODAY, days:days }, null, 2);
+}
 // ── State ──
 var state={ tab:"plan", planView:"plan", openMeal:NOW_MEAL, openTheory:null, optFilter:NOW_MEAL, openGroup:null, viewDate:TODAY, calMonth:TODAY.slice(0,7), tracking:loadDay(TODAY), exportOpen:false, exportText:"", copied:false, importOpen:false, importMsg:"" };
 // ── Calendar / month helpers ──
 var MONTH_NAMES=["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 function monthShift(ym,delta){ var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1+delta; var d=new Date(y,m,1); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
-function dayCount(dateStr){ var r=lsGet("nut:"+dateStr); if(!r)return 0; var p=JSON.parse(r); var n=0; for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]])n++; } return n; }
+function dayCount(dateStr){ var p=parseDay(lsGet("nut:"+dateStr)); var n=0; for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]])n++; } return n; }
 function monthCells(ym){
 var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1;
 var first=new Date(y,m,1), startDow=(first.getDay()+6)%7; // Monday=0
@@ -331,17 +362,19 @@ return cells;
 }
 function monthSummary(ym){
 var y=parseInt(ym.slice(0,4),10), m=parseInt(ym.slice(5,7),10)-1, nDays=new Date(y,m+1,0).getDate();
-var out={ daysLogged:0, mealsDone:0, dinar:{}, sopar:{}, dinarV:{}, soparV:{} };
+var out={ daysLogged:0, mealsDone:0, dinar:{}, sopar:{}, dinarV:{}, soparV:{}, dinarP:{}, soparP:{}, fruta:{} };
 for(var d=1;d<=nDays;d++){
 var k=y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0");
-var r=lsGet("nut:"+k); if(!r)continue;
-var p=JSON.parse(r), any=false, c=0;
+var p=parseDay(lsGet("nut:"+k)); var any=false, c=0;
 for(var j=0;j<MEAL_IDS.length;j++){ if(p[MEAL_IDS[j]]){c++;any=true;} }
 out.mealsDone+=c; if(any)out.daysLogged++;
 if(p.dinarH)out.dinar[p.dinarH]=(out.dinar[p.dinarH]||0)+1;
 if(p.soparH)out.sopar[p.soparH]=(out.sopar[p.soparH]||0)+1;
 if(p.dinarV)out.dinarV[p.dinarV]=(out.dinarV[p.dinarV]||0)+1;
 if(p.soparV)out.soparV[p.soparV]=(out.soparV[p.soparV]||0)+1;
+if(p.dinarP)out.dinarP[p.dinarP]=(out.dinarP[p.dinarP]||0)+1;
+if(p.soparP)out.soparP[p.soparP]=(out.soparP[p.soparP]||0)+1;
+if(Array.isArray(p.fruta)){ p.fruta.forEach(function(f){ out.fruta[f]=(out.fruta[f]||0)+1; }); }
 }
 return out;
 }
@@ -407,7 +440,7 @@ return out;
 }
 function vHoy(){
 var t=state.tracking, vd=state.viewDate;
-var isToday=vd===TODAY, canNext=vd<TODAY, viewGym=[1,3,5].indexOf(dowOf(vd))>=0;
+var isToday=vd===TODAY, canNext=vd<TODAY, viewGym=isGymDay(vd,t);
 var label=cap(new Date(vd+"T12:00:00").toLocaleDateString("es-ES",{weekday:"long",day:"numeric",month:"short"}));
 var checked=0; MEAL_IDS.forEach(function(id){ if(t[id])checked++; });
 var total=MEAL_IDS.length, pct=Math.round(checked/total*100);
@@ -416,13 +449,18 @@ var nowTime=new Date().toLocaleTimeString("es-ES",{hour:"2-digit",minute:"2-digi
 var out='<div class="date-nav"><button class="dn-arrow" data-act="date" data-val="-1">‹</button><div class="dn-center"><div class="dn-day">'+label+'</div>'+(isToday?'<span class="dn-tag">Hoy</span>':'<button class="dn-today" data-act="today">Volver a hoy</button>')+'</div><button class="dn-arrow" data-act="date" data-val="1"'+(canNext?'':' disabled')+'>›</button></div>';
 if(isToday){ out+='<div class="now-banner"><span class="nb-time">🕐 '+nowTime+'</span><span class="nb-txt">Ahora toca <strong>'+MEAL_META[NOW_MEAL].label+'</strong> '+MEAL_META[NOW_MEAL].icon+'</span></div>'; }
 out+='<div class="comp-card"><svg width="82" height="82" viewBox="0 0 82 82"><circle cx="41" cy="41" r="'+R+'" fill="none" stroke="#EDE8E0" stroke-width="7"></circle><circle cx="41" cy="41" r="'+R+'" fill="none" stroke="#1A3C2A" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+C+'" stroke-dashoffset="'+off+'" transform="rotate(-90 41 41)"></circle><text x="41" y="41" text-anchor="middle" dy=".35em" fill="#1A3C2A" font-size="14" font-weight="bold" font-family="Lora,Georgia,serif">'+pct+'%</text></svg>'+
-'<div class="comp-r"><div class="comp-pc">'+checked+'/'+total+' comidas</div><div class="comp-sb">'+(pct===100?"¡Día perfecto! 🎉":pct>=60?"Buen ritmo 💪":pct>0?"Sigue adelante 🌱":(isToday?"Empieza a marcar 📌":"Sin registrar 📌"))+'</div><div class="gym-badge '+(viewGym?"on":"off")+'">'+(viewGym?"💪 Día de entreno":"🧘 Día de descanso")+'</div></div></div>';
+'<div class="comp-r"><div class="comp-pc">'+checked+'/'+total+' comidas</div><div class="comp-sb">'+(pct===100?"¡Día perfecto! 🎉":pct>=60?"Buen ritmo 💪":pct>0?"Sigue adelante 🌱":(isToday?"Empieza a marcar 📌":"Sin registrar 📌"))+'</div><button class="gym-badge '+(viewGym?"on":"off")+'" data-act="gym">'+(viewGym?"💪 Día de entreno":"🧘 Día de descanso")+'<span class="gym-sub">toca para cambiar</span></button></div></div>';
 MEAL_IDS.forEach(function(id){
 var meta=MEAL_META[id], done=!!t[id], isNow=isToday&&id===NOW_MEAL, hasThirds=(id==="dinar"||id==="sopar"), hidField=id==="dinar"?"dinarH":"soparH", vegField=id==="dinar"?"dinarV":"soparV";
+var protField=id==="dinar"?"dinarP":"soparP";
 out+='<div class="trk-wrap"><div class="trk-row'+(done?" ck":"")+(isNow?" now":"")+'" data-act="toggle" data-val="'+id+'"><span class="trk-ico">'+meta.icon+'</span><span class="trk-lbl">'+meta.label+(isNow?'<span class="now-tag">ahora</span>':'')+'</span><div class="chk-o'+(done?" ck":"")+'">'+(done?"✓":"")+'</div></div>';
+if(id==="berenar"){ out+='<div class="meal-hint">'+(viewGym?'⚡ Día de entreno → recovery: yogur proteico + fruta':'🧘 Sin entreno → 2 snacks: 16h y 18:30h')+'</div>'; }
 if(done&&hasThirds){
 out+='<div class="chip-row"><span class="chip-lbl">Hidrato:</span>';
 HID_CHIPS[id].forEach(function(c){ var sel=t[hidField]===c.id; out+='<button class="chip'+(sel?" on":"")+'" data-act="hid" data-meal="'+id+'" data-val="'+c.id+'">'+c.ico+' '+c.label+'</button>'; });
+out+='</div>';
+out+='<div class="chip-row"><span class="chip-lbl">Proteína:</span>';
+PROT_CHIPS.forEach(function(c){ var sel=t[protField]===c.id; out+='<button class="chip prot'+(sel?" on":"")+'" data-act="prot" data-meal="'+id+'" data-val="'+c.id+'">'+c.ico+' '+c.label+'</button>'; });
 out+='</div>';
 out+='<div class="chip-row"><span class="chip-lbl">Verdura:</span>';
 VEG_CHIPS.forEach(function(c){ var sel=t[vegField]===c.id; out+='<button class="chip veg'+(sel?" on":"")+'" data-act="veg" data-meal="'+id+'" data-val="'+c.id+'">'+c.ico+' '+c.label+'</button>'; });
@@ -430,6 +468,9 @@ out+='</div>';
 }
 out+='</div>';
 });
+out+='<div class="wk-box" style="margin-top:10px"><div class="wk-hdr">🍇 Fruta de hoy · marca los grupos que has comido</div><div class="chip-row" style="padding:0">';
+FRUIT_CHIPS.forEach(function(c){ var sel=(t.fruta||[]).indexOf(c.id)>=0; out+='<button class="chip'+(sel?" on":"")+'" data-act="fruit" data-val="'+c.id+'">'+c.ico+' '+c.label+'</button>'; });
+out+='</div><div class="var-hint" style="margin-top:8px">Objetivo del plan: más variedad de fruta. Intenta que aparezcan los 4 grupos a lo largo de la semana.</div></div>';
 var wk=weekCounts();
 out+='<div class="wk-box"><div class="wk-hdr">Adherencia · toca un día para editarlo</div><div class="wk-cols">';
 Object.keys(wk).forEach(function(date){
@@ -461,9 +502,31 @@ out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="va
 out+='</div>';
 });
 out+='<div class="var-hint">Marca el grupo de verdura dominante del plato (aunque mezcles varios, elige el que más pese) para ver si las crucíferas están apareciendo cada semana.</div>';
+out+='<div class="lst-ttl">🥩 Variedad de proteína · esta semana</div>';
+["dinar","sopar"].forEach(function(mk){
+var pf=mk==="dinar"?"dinarP":"soparP";
+out+='<div class="var-card"><div class="var-head">'+MEAL_META[mk].icon+' En '+MEAL_META[mk].label.toLowerCase()+'</div>';
+PROT_TARGETS[mk].forEach(function(g){
+var cnt=(vr[pf]||{})[g.id]||0, ev=vEval(cnt,g.min,g.max), tgt=g.min===0?("máx "+g.max):(g.min+"-"+g.max);
+out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span><span class="var-tgt">obj '+tgt+'</span><span class="var-st '+ev.cls+'">'+ev.txt+'</span></div>';
+});
+out+='</div>';
+});
+out+='<div class="var-hint">El plan pide no abusar de carne roja y pescado azul, y priorizar huevos en la cena. Este bloque te avisa si te pasas.</div>';
+out+='<div class="lst-ttl">🍇 Variedad de fruta · esta semana</div>';
+out+='<div class="var-card">';
+FRUIT_CHIPS.forEach(function(g){
+var cnt=(vr.fruta||{})[g.id]||0;
+out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span></div>';
+});
+out+='</div>';
+var le=lsGet("nut:lastExport"), anyData=Object.keys(wk).some(function(k){ return wk[k]>0; });
+if(anyData && (!le || shiftDate(le,14)<TODAY)){
+out+='<div class="var-hint" style="color:#92400E;margin-top:10px">💾 Hace más de 14 días del último backup (o nunca lo has hecho). Exporta tus datos para no perderlos.</div>';
+}
 out+='<button class="export-btn" data-act="export">'+(state.exportOpen?"✕ Cerrar backup":"⬇︎ Exportar mis datos (backup)")+'</button>';
 if(state.exportOpen){
-out+='<div class="export-box"><div class="export-bar"><span>Copia y guarda este texto</span><button data-act="copy">'+(state.copied?"¡Copiado!":"Copiar")+'</button></div><textarea class="export-ta" readonly>'+state.exportText+'</textarea></div>';
+out+='<div class="export-box"><div class="export-bar"><span>Copia y guarda este texto</span><button data-act="copy">'+(state.copied?"¡Copiado!":"Copiar")+'</button></div><textarea class="export-ta" readonly>'+esc(state.exportText)+'</textarea></div>';
 }
 out+='<button class="export-btn" data-act="import">'+(state.importOpen?"✕ Cerrar importación":"⬆︎ Importar datos (desde otro dispositivo)")+'</button>';
 if(state.importOpen){
@@ -507,6 +570,15 @@ out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="va
 out+='</div>';
 });
 ["dinar","sopar"].forEach(function(mk){
+var pf=mk==="dinar"?"dinarP":"soparP";
+out+='<div class="var-card"><div class="var-head">'+MEAL_META[mk].icon+' Proteína en '+MEAL_META[mk].label.toLowerCase()+' · '+MONTH_NAMES[m]+'</div>';
+PROT_TARGETS[mk].forEach(function(g){
+var cnt=(sm[pf]||{})[g.id]||0;
+out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span></div>';
+});
+out+='</div>';
+});
+["dinar","sopar"].forEach(function(mk){
 var vf=mk==="dinar"?"dinarV":"soparV";
 out+='<div class="var-card"><div class="var-head">'+MEAL_META[mk].icon+' Verdura en '+MEAL_META[mk].label.toLowerCase()+' · '+MONTH_NAMES[m]+'</div>';
 VEG_TARGETS[mk].forEach(function(g){
@@ -515,6 +587,12 @@ out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="va
 });
 out+='</div>';
 });
+out+='<div class="var-card"><div class="var-head">🍇 Grupos de fruta · '+MONTH_NAMES[m]+'</div>';
+FRUIT_CHIPS.forEach(function(g){
+var cnt=(sm.fruta||{})[g.id]||0;
+out+='<div class="var-row"><span class="var-ico">'+g.ico+'</span><span class="var-lbl">'+g.label+'</span><span class="var-cnt">'+cnt+'×</span></div>';
+});
+out+='</div>';
 out+='<div class="var-hint">Toca cualquier día del calendario para abrirlo y editar su registro. Este resumen mensual es lo que puedes enseñar en tu revisión trimestral.</div>';
 return out;
 }
@@ -550,6 +628,9 @@ else if(act==="optgroup"){ state.openGroup=state.openGroup===val?null:val; }
 else if(act==="toggle"){ var t=Object.assign({},state.tracking); t[val]=!t[val]; state.tracking=t; saveDay(state.viewDate,t); }
 else if(act==="hid"){ var meal=el.dataset.meal, field=meal==="dinar"?"dinarH":"soparH"; var t2=Object.assign({},state.tracking); t2[field]=t2[field]===val?null:val; t2[meal]=true; state.tracking=t2; saveDay(state.viewDate,t2); }
 else if(act==="veg"){ var mealV=el.dataset.meal, fieldV=mealV==="dinar"?"dinarV":"soparV"; var t3=Object.assign({},state.tracking); t3[fieldV]=t3[fieldV]===val?null:val; t3[mealV]=true; state.tracking=t3; saveDay(state.viewDate,t3); }
+else if(act==="prot"){ var mealP=el.dataset.meal, fieldP=mealP==="dinar"?"dinarP":"soparP"; var t4=Object.assign({},state.tracking); t4[fieldP]=t4[fieldP]===val?null:val; t4[mealP]=true; state.tracking=t4; saveDay(state.viewDate,t4); }
+else if(act==="fruit"){ var t5=Object.assign({},state.tracking); var fr=(t5.fruta||[]).slice(); var ix=fr.indexOf(val); if(ix>=0)fr.splice(ix,1); else fr.push(val); t5.fruta=fr; state.tracking=t5; saveDay(state.viewDate,t5); }
+else if(act==="gym"){ var t6=Object.assign({},state.tracking); t6.gym=!isGymDay(state.viewDate,t6); state.tracking=t6; saveDay(state.viewDate,t6); }
 else if(act==="date"){ var nd=shiftDate(state.viewDate, parseInt(val,10)); if(parseInt(val,10)>0 && nd>TODAY) return; state.viewDate=nd; state.tracking=loadDay(nd); }
 else if(act==="today"){ state.viewDate=TODAY; state.tracking=loadDay(TODAY); }
 else if(act==="setdate"){ state.viewDate=val; state.tracking=loadDay(val); }
@@ -557,21 +638,48 @@ else if(act==="calprev"){ state.calMonth=monthShift(state.calMonth,-1); }
 else if(act==="calnext"){ if(state.calMonth<TODAY.slice(0,7)) state.calMonth=monthShift(state.calMonth,1); }
 else if(act==="calday"){ state.viewDate=val; state.tracking=loadDay(val); state.tab="hoy"; }
 else if(act==="export"){ state.exportOpen=!state.exportOpen; if(state.exportOpen){ state.exportText=buildExport(); state.copied=false; } }
-else if(act==="copy"){ try{ navigator.clipboard.writeText(state.exportText); state.copied=true; }catch(err){} }
+else if(act==="copy"){
+navigator.clipboard.writeText(state.exportText).then(function(){ state.copied=true; lsSet("nut:lastExport",TODAY); render(); }).catch(function(){ state.copied=false; render(); });
+return;
+}
 else if(act==="import"){ state.importOpen=!state.importOpen; state.importMsg=""; }
 else if(act==="doimport"){
 var ta=document.getElementById("importTA"); var raw=ta?ta.value.trim():"";
 if(!raw){ state.importMsg="✗ Pega primero el texto del backup."; }
 else { try {
-var obj=JSON.parse(raw); var n=0;
-Object.keys(obj).forEach(function(k){ if(/^\d{4}-\d{2}-\d{2}$/.test(k) && obj[k] && typeof obj[k]==="object"){ saveDay(k,obj[k]); n++; } });
+var obj=JSON.parse(raw);
+var days=(obj && typeof obj==="object" && obj.days && typeof obj.days==="object") ? obj.days : obj; // acepta backup v2 (con schema) y formato antiguo (plano)
+var valid={}, overwrite=0;
+Object.keys(days||{}).forEach(function(k){
+if(/^\d{4}-\d{2}-\d{2}$/.test(k) && days[k] && typeof days[k]==="object" && !Array.isArray(days[k])){
+var s=sanitizeDay(days[k]);
+if(Object.keys(s).length){ valid[k]=s; if(lsGet("nut:"+k)) overwrite++; }
+}
+});
+var n=Object.keys(valid).length;
+if(!n){ state.importMsg="✗ No encontré días válidos en ese texto."; }
+else if(overwrite>0 && !window.confirm("Este backup sobrescribirá "+overwrite+" día(s) que ya tienes registrados en este dispositivo. ¿Continuar?")){ state.importMsg="Importación cancelada — no se ha tocado nada."; }
+else {
+Object.keys(valid).forEach(function(k){ saveDay(k,valid[k]); });
 state.tracking=loadDay(state.viewDate);
-state.importMsg = n>0 ? ("✓ Importados "+n+" días. ¡Listo!") : "✗ No encontré días válidos en ese texto.";
+state.importMsg="✓ Importados "+n+" días"+(overwrite?" ("+overwrite+" sobrescritos)":"")+". ¡Listo!";
+}
 } catch(err){ state.importMsg="✗ El texto no es un backup válido (debe ser el JSON exportado)."; } }
 }
 render();
 });
 render();
+// ── Refresco al volver a primer plano (la PWA puede quedarse abierta días) ──
+document.addEventListener("visibilitychange", function(){
+if(document.visibilityState!=="visible") return;
+var nt=localDateStr(), nm=currentMeal(), changed=false;
+if(nt!==TODAY){
+if(state.viewDate===TODAY){ state.viewDate=nt; state.tracking=loadDay(nt); }
+TODAY=nt; state.calMonth=TODAY.slice(0,7); changed=true;
+}
+if(nm!==NOW_MEAL){ NOW_MEAL=nm; changed=true; }
+if(changed) render();
+});
 // ── Service worker (offline) ──
 if("serviceWorker" in navigator){
 window.addEventListener("load", function(){ navigator.serviceWorker.register("./sw.js").catch(function(){}); });
