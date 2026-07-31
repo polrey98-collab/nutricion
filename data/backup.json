@@ -1,7 +1,7 @@
 {
   "schema": "nutri-pol-v2",
   "app_version": "1.6",
-  "exported": "2026-07-22",
+  "exported": "2026-07-31",
   "days": {
     "2026-06-05": {
       "desayuno": true,
@@ -377,6 +377,85 @@
       "berenar": true,
       "sopar": true,
       "soparH": "patata"
+    },
+    "2026-07-27": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "patata",
+      "dinarV": "hoja",
+      "soparV": "hoja",
+      "dinarP": "magra",
+      "soparP": "huevos",
+      "fruta": [
+        "hierro",
+        "igalto"
+      ]
+    },
+    "2026-07-28": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "legumbre",
+      "soparV": "vitA",
+      "dinarP": "rojaazul",
+      "soparP": "huevos",
+      "fruta": [
+        "hierro",
+        "igalto",
+        "rojos",
+        "igmedio"
+      ]
+    },
+    "2026-07-29": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "patata",
+      "soparH": "otro",
+      "dinarV": "vitA",
+      "dinarP": "magra",
+      "soparP": "rojaazul",
+      "fruta": [
+        "hierro",
+        "igalto",
+        "rojos"
+      ]
+    },
+    "2026-07-30": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "pan",
+      "soparV": "vitA",
+      "dinarP": "magra",
+      "soparP": "magra",
+      "fruta": [
+        "igalto",
+        "hierro"
+      ]
+    },
+    "2026-07-31": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "dinarH": "patata",
+      "dinarV": "vitA",
+      "dinarP": "rojaazul",
+      "fruta": [
+        "igalto"
+      ]
     }
   }
 }
