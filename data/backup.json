@@ -1,7 +1,7 @@
 {
   "schema": "nutri-pol-v2",
   "app_version": "1.6",
-  "exported": "2026-07-31",
+  "exported": "2026-08-13",
   "days": {
     "2026-06-05": {
       "desayuno": true,
@@ -450,11 +450,99 @@
       "desayuno": true,
       "matina": true,
       "dinar": true,
+      "berenar": true,
+      "sopar": true,
       "dinarH": "patata",
+      "soparH": "pan",
+      "dinarV": "vitA",
+      "soparV": "hoja",
+      "dinarP": "magra",
+      "soparP": "huevos",
+      "fruta": [
+        "igalto",
+        "hierro"
+      ]
+    },
+    "2026-08-01": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "patata",
+      "soparH": "otro",
       "dinarV": "vitA",
       "dinarP": "rojaazul",
+      "soparP": "rojaazul",
       "fruta": [
-        "igalto"
+        "igmedio",
+        "hierro",
+        "rojos"
+      ]
+    },
+    "2026-08-02": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "patata",
+      "dinarV": "hoja",
+      "soparV": "hoja",
+      "dinarP": "magra",
+      "soparP": "huevos",
+      "fruta": [
+        "igalto",
+        "hierro"
+      ]
+    },
+    "2026-08-03": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "otro",
+      "soparV": "crucifera",
+      "dinarP": "rojaazul",
+      "soparP": "rojaazul",
+      "fruta": [
+        "igalto",
+        "rojos"
+      ]
+    },
+    "2026-08-12": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "otro",
+      "dinarV": "crucifera",
+      "dinarP": "rojaazul",
+      "soparP": "magra",
+      "fruta": [
+        "rojos"
+      ]
+    },
+    "2026-08-13": {
+      "desayuno": true,
+      "matina": true,
+      "dinar": true,
+      "berenar": true,
+      "sopar": true,
+      "dinarH": "arroz",
+      "soparH": "otro",
+      "dinarV": "vitA",
+      "soparV": "vitA",
+      "dinarP": "magra",
+      "soparP": "rojaazul",
+      "fruta": [
+        "igalto",
+        "hierro"
       ]
     }
   }
